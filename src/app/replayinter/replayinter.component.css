@@ -1,0 +1,103 @@
+.loading {
+    width: 100%;
+}
+
+.mainDiv {
+    width: 30%;
+    min-width: 200px;
+    margin-left: 67%;
+}
+
+.interDiv {
+    height: 75px;
+    margin: 10px 0;
+    right: 0;
+    text-align: center;
+    background-color: rgb(245, 245, 245);
+    border: 2px solid white;
+}
+
+.interDiv:hover {
+    background-color: rgb(214, 214, 214);
+    border: 2px solid darkgrey;
+}
+
+.link {
+    text-decoration: none;
+}
+
+.miniature {
+    height: 75px;
+    float: right;
+}
+
+.infoVideo {
+    padding: 29px 0;
+    left: 50px;
+    font-size: 15px;
+    height: 17px;
+}
+
+#contenu {
+    background-size: cover;
+    width: 60vw;
+    margin-left: 5%;
+    float: left;
+}
+.video-js {
+    width: 60vw;
+    height: 35vw;
+    margin: 0 auto;
+}
+.vjs-big-play-button {
+    position: absolute;
+    margin: 0 45%;
+    margin-left: 50%;
+    margin-top: 13.5vw;
+    /* transform: translateX(-63%);
+    top: 14vw !important; */
+} 
+.vjs-poster {
+    background-image: url("../../assets/poster.jpg") !important;
+}
+.vjs-styling .vjs-volume-control .vjs-control .vjs-volume-horizontal {
+    background-color: red !important;
+}
+#changeButton {
+    height: 50px;
+    width: 75%;
+    margin-left: 12.5%;
+}
+#secureLinkDiv {
+
+    margin: 20px 0;
+    border: 2px solid black;
+}
+#newFluxDiv {
+    padding: 2px 0;
+    width: 102%;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    margin-left: -1%;
+    background-color: #439600;
+    color: white;
+    font-size: 1.1vw;
+    text-align: center;
+    display: none;
+}
+#buttonLive {
+    text-align: center;
+}
+#backToLive {
+    height: 7%;
+    width:75%;
+    margin-left: 12.5%;
+    font-size: 1em;
+    display: block;
+}
+
+@media only screen and (max-width: 550px) {
+    .vjs-big-play-button {
+        margin-top: 0;
+    }
+}

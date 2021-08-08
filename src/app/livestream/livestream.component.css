@@ -1,0 +1,61 @@
+#contenu {
+    background-image: url("/admin/assets/bgImg.jpg");
+    background-size: cover;
+    width: 60%;
+    margin-left: 20%;
+}
+.video-js {
+    width: 75%;
+    height: 75%;
+    margin: 0 auto;
+}
+.vjs-big-play-button {
+    position: absolute;
+    /* margin: 0 45%; */
+    margin-left: 50%;
+    margin-top: 13.5vw;
+    transform: translateX(-63%);
+    /* top: 14vw !important; */
+}
+.vjs-poster {
+    background-image: url("../../assets/poster.jpg") !important;
+}
+
+.vjs-styling .vjs-volume-bar {
+    background-color: red;
+}
+
+#changeButton {
+    height: 50px;
+    width: 75%;
+    margin-left: 12.5%;
+}
+
+#newFluxDiv {
+    padding: 2px 0;
+    width: 102%;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    margin-left: -1%;
+    background-color: #439600;
+    color: white;
+    font-size: 1.1vw;
+    text-align: center;
+    display: none;
+}
+#buttonLive {
+    text-align: center;
+}
+#backToLive {
+    height: 7%;
+    width:75%;
+    margin-left: 12.5%;
+    font-size: 1em;
+    display: block;
+}
+
+@media only screen and (max-width: 550px) {
+    .vjs-big-play-button {
+        margin-top: 0;
+    }
+}

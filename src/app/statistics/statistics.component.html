@@ -1,0 +1,25 @@
+<body>
+    <app-header></app-header>
+
+    <div *ngFor="let id of idVol" [style.display] = "showFilesStyle" id="mainDiv">
+        <p>Essai {{id}}</p>
+        <app-cartography idVol={{id}}></app-cartography>
+    </div>
+    
+    <div [style.display] = "loadFilesStyle">
+        <input #myInput type="file" id="file-selector" (change)="readFile($event)" accept=".csv">
+        <div id="uploadFile" (click)="chooseFile()">
+            <p>{{buttonText}}</p>
+        </div>
+        <mat-progress-bar class="loading" mode="indeterminate" [style.display] = displayLoading></mat-progress-bar>
+    </div>
+
+    
+
+    <div id="graph1" style="display: none">
+        <canvas #canvasBattery [width] = widthBattery [height] = heightBattery></canvas>
+        <canvas #canvasAltitude [width] = widthAltitude [height] = heightAltitude></canvas>
+    </div>
+    <!-- <p>{{dataJson}}</p> -->
+    <!-- <img src={{imageUrl}} alt="erreur"> -->
+</body>

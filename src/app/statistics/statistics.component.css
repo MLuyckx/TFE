@@ -1,0 +1,47 @@
+body {
+    overflow-x: hidden;
+}
+
+#file-selector {
+    display: none;
+}
+
+#uploadFile {
+    width: 30%;
+    height: 50px;
+    font-size: 16px;
+    background-color: rgb(214, 214, 214);
+    text-align: center; 
+    border-radius: 10px;
+    cursor: pointer;
+    margin-left: 35%;
+}
+
+#uploadFile > p {
+    padding: 17px 0;
+}
+
+#uploadFile:hover {
+    background-color: rgb(190, 190, 190);
+}
+
+.loading {
+    width: 30%;
+    margin-left: 35%;
+}
+
+#graph {
+    /* width: 50%;
+    height: 500px;
+    border: 1px solid grey;
+    margin: 5px; */
+}
+
+#graph1 {
+    margin-left: 25vw; 
+    
+}
+
+#graph1 > canvas {
+    width: 50vw;
+}

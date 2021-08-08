@@ -1,0 +1,39 @@
+.square {
+    width: 34vw;
+    height: 30vh;
+    background-color: rgb(214, 214, 214);
+    text-align: center; 
+    border-radius: 25px;
+}
+
+.square:hover {
+    background-color: rgb(190, 190, 190);
+}
+
+.text {
+    position: relative;
+    font-size: 17px;
+    margin-top: 13vh;
+    color: black;
+}
+
+.leftDiv {
+    margin: 2% 2% 2% 13%;
+    float: left;
+    
+}
+
+.rightDiv {
+    margin: 2% 13% 2% 2%;
+    float: right;
+}
+
+.link {
+    text-decoration: none;
+}
+
+@media only screen and (max-width: 550px) {
+    .text {
+        font-size: 3.5vw;
+    }
+}

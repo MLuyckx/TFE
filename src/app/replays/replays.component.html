@@ -1,0 +1,26 @@
+<mat-progress-bar class="loading" mode="indeterminate" [style.display] = displayLoading></mat-progress-bar>
+<app-header></app-header>
+<div *ngFor="let inter of inters" [style.display] = styleChoixInter id="mainDiv">
+        <div class="interDiv" (click)="moveToInterReplay(inter)">
+            <img src="../../assets/camera.png" class="numberVideoImg">
+            <p class="numberVideo"><b>{{inter.numberOfVideos}}</b></p>
+            <img src="{{inter.imageSource}}" class="miniature" (error)="defaultImage">
+
+            <div class="infoVideo"><p>{{inter.commune}}{{inter.street}}</p></div>
+            <div class="infoVideo"><p>{{inter.startTime}}</p></div>
+        </div>
+        <div class="interDivChoice">
+            <img src="{{inter.imageSource}}" class="miniature" (error)="defaultImage">
+            <div class="bothButtons">
+                <div class="buttonReplay" (click)="moveToInterReplay(inter)">
+                    <img src="../../assets/camera.png" class="choiceImage">
+                    <p>Revisionnage ({{inter.numberOfVideos}} vidéos)</p>
+                </div>
+                <div class="buttonStats" (click)="moveToInterStats(inter)">
+                    <img src="../../assets/stats.png" class="choiceImage">
+                    <p>Statistiques</p>
+                </div>
+            </div>
+            
+        </div>
+</div>

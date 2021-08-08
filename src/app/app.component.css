@@ -1,0 +1,9 @@
+@import '~video.js/dist/video-js.css';
+html {
+    overflow-x: hidden;
+    font-family: 'Lucida Sans',sans-serif;
+    margin: 0 -8px;
+}
+
+
+

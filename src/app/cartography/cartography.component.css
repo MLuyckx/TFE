@@ -1,0 +1,106 @@
+/* body {
+    overflow-x: hidden;
+} */
+
+body {
+    display: flex;
+    overflow-x: hidden;
+    flex-direction: column;
+    /* height: 100vh; */
+    /* width: 100%; */
+}
+
+main {
+    display: flex;
+    width: 88vw;
+    height: 80vh;
+    margin-left: 6vw;
+    border: 1px solid black;
+}
+
+.map-container {
+    flex-grow: 2;
+    width: 100%;
+    margin-right: -20vh;
+}
+
+#data {
+    position: absolute;
+    top: 16vh;
+    right: 6vw;
+    width: 16vw;
+    height: 70vh;
+    text-align: center;
+    border: 1px solid black;
+}
+
+.arrow {
+    position: absolute;
+    width: 8vh;
+    margin: 2vh 0 0;
+    right: 6vh;
+}
+
+.chrono {
+    position: absolute;
+    width: 20vh;
+    text-align: center;
+    font-size: 2.5vh;
+    top: 5vh;
+}
+
+.battery {
+    position: absolute;
+    width: 20vh;
+    text-align: center;
+    font-size: 2.5vh;
+    margin-top: 4.5vh;
+}
+
+.currentHour {
+    position: absolute;
+    width: 18vh;
+    bottom: 0;
+    text-align: center;
+    font-size: 2.5vh;
+    border: 1vh solid rgb(0, 0, 0, 0.4);
+    border-radius: 2vh;
+}
+
+.height {
+    position: absolute;
+    width: 20vh;
+    text-align: center;
+    font-size: 2.5vh;
+    margin-top: 4.5vh;
+}
+
+.logo {
+    margin: 0 4vh;
+    height: 12vh;
+    opacity: 0.4;
+    /* transform: translateX(50%); */
+}
+
+.logoHeight {
+    margin: 0 7.98vh;
+    width: 4.03vh;
+    opacity: 0.4;
+}
+
+.airData {
+    position: relative;
+    top: 1vh;
+    height: 78vh;
+    width: 20vh;
+    border: 1px transparent;
+}
+
+.airDataItem { 
+    width: 100%;
+}
+
+footer {
+    background-color: var(--header-color);
+    padding: 1em;
+}

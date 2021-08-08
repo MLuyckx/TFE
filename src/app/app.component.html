@@ -1,0 +1,43 @@
+<head>
+    <meta charset="UTF-8">
+    <script src="http://www.myersdaily.org/joseph/javascript/md5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js" integrity="sha512-nOQuvD9nKirvxDdvQ9OMqe2dgapbPB7vYAMrzJihw5m+aNcf0dX53m6YxM4LgA9u8e9eg9QX+/+mPu8kCNpV2A==" crossorigin="anonymous"></script>
+</head>
+<body>
+    <router-outlet></router-outlet>
+</body>
+
+
+<script>
+videojs("video", {
+    controls: true,
+    plugins: {
+        videoJsResolutionSwitcher: {
+            default: 'high',
+            dynamicLabel: true
+        },
+        // vjsdownload: {
+        //     beforeElement: 'playbackRateMenuButton',
+        //     textControl: 'Download video',
+        //     name: 'downloadButton',
+        //     downloadURL: '/replay/test-1617710148.mp4' //optional if you need a different download url than the source
+        // }
+    }
+}, function() {
+    var player = this;
+    window.player = player;
+    player.updateSrc([
+        {
+            // src: 'http://192.168.13.110:8080/live/index.m3u8',
+            src: 'https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8',
+            type: 'application/x-mpegURL',
+            label: 'HD'
+        },
+        {
+            src: 'http://192.168.13.110:8080/mobile/index.m3u8',
+            type: 'application/x-mpegURL',
+            label: 'mobile'
+        }
+    ]);
+});
+</script>

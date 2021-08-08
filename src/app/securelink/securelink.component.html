@@ -1,0 +1,27 @@
+<div class="linkButton" (click)="toggleModal()"><p>Générer un lien temporaire</p></div>
+<br>
+<div id="myModal" class="modal" [style.display]=displayModal>
+    <div class="modal-box">
+        <div class="modal-content">
+            <span class="close" (click)="toggleModal()">&times;</span>
+            <div id="secureLinkmainDiv">
+                <div id="secureLinkDataDiv">
+                    <p id="textGeneration">Le lien sécurisé sera valable durant 
+                        <select [(ngModel)]="selectedOption" type="number" id="selectDuration" >
+                            <option *ngFor="let opt of options" [value]="opt.id" [selected]="opt.selected">{{ opt.label }}</option>
+                        </select> heures</p>
+                    <div class="linkButton" (click)="generateSecureLink()"><p>Générer un lien sécurisé</p></div>
+                </div>
+                <div style="height: 0.5vw; background-color: white;" *ngIf="isShown"></div>
+                <div id="generationInfos" *ngIf="isShown">
+                    <p id="link"><a href="{{securedLink}}" target="blank" style="text-decoration:none, underline; color: black;">{{securedLink}}</a></p>
+                    <div id="buttons">
+                        <div class="copyButton" (click)="copyLink()"><p>Copier le lien</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

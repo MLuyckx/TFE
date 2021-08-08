@@ -1,0 +1,28 @@
+<main>
+    <div id="ol-map" class="map-container"></div>
+    <div class="airData">
+        <div class="airDataItem">
+            <p class="chrono"><b>{{currentFlightTime}}</b></p>
+            <img src="../../assets/chrono.png" class="logo">
+        </div>
+        <div class="airDataItem">
+            <p class="battery"><b>{{currentBatteryLevel}}%</b></p>
+            <img src="../../assets/battery.png" class="logo">
+        </div>
+        <div class="airDataItem">
+            <p class="height"><b>{{currentHeight}}m</b></p>
+            <img src="../../assets/height.png" class="logoHeight">
+        </div>
+        <div class="airDataItem">
+            <img src="../../assets/drone.png" class="logo">
+            <img #arrowAircraft [ngStyle]="styleArrowAircraft" src="../../assets/arrow.png" class="arrow">
+        </div>
+        <div class="airDataItem">
+            <img src="../../assets/camera.png" class="logo">
+            <img #arrowGimbal [ngStyle]="styleArrowGimbal" src="../../assets/arrow.png" class="arrow">
+        </div>
+        <div class="airDataItem">
+            <p class="currentHour"><b>{{currentHour}}</b></p>
+        </div>
+    </div>
+</main> 
