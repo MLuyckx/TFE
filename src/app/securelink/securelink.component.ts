@@ -62,13 +62,13 @@ export class SecurelinkComponent implements OnInit {
     d.setHours(d.getHours()+duree);
     var expiretime = Math.floor(d.valueOf()/1000);
     var secret = "drone";
-    var input = expiretime + "/web/index.html " + secret;
+    var input = expiretime + "/limited/live " + secret;
     var hash = CryptoJS.MD5(input)
     var output = hash.toString(CryptoJS.enc.Base64);
     output = output.replace('=','');
     output = output.replace('+','-');
     output = output.replace('/','_');
-    var link = "http://192.168.13.110:8080/web/index.html?md5=" + output + '&expires=' + expiretime;
+    var link = "http://192.168.13.110:8080/limited/live?md5=" + output + '&expires=' + expiretime;
     var url = '<a href=' + link + ' target="_blank" style="text-decoration:none, underline; color: white;">' + link + '</a>';
     this.validite = "Ce lien est valable jusqu'au " + d.getDate() + "/" + (d.getMonth()+1) + "/" + d.getFullYear() + " à " + d.getHours() + ":" + (d.getMinutes()<10?'0':'') + d.getMinutes();
     this.isShown = true;

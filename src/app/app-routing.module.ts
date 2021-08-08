@@ -16,6 +16,7 @@ const routes: Routes = [
   {path: 'replay', component: ReplayinterComponent},
   {path: 'stats', component: StatisticsComponent},
   {path: 'carto', component: CartographyComponent},
+  {path: 'limited/live', component: LivestreamComponent},
   {path: '**', component: HomeComponent},
 ];
 
