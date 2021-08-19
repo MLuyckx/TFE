@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 @Component({
@@ -14,8 +14,62 @@ export class ReplaysComponent implements OnInit {
   inters: any[][] = [];
   displayLoading = "block";
   essai = "<p><b>Essai</b></p>"
-  defaultImage = "../../assets/drone.png"
+  defaultImage = "../../assets/drone.png";
+  displayModal = "none";
+  isModalOn = false;
+  newTitle = "";
+  displayError = "none";
+
+  selectedName = "";
+  selectedIdInter = 0;
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: any) {
+    var isIncluded = false;
+    var isButton = false;
+    for(let i=0;i<event["path"].length; i++) {
+      if(event["path"][i].className == "modal-content") {
+        isIncluded = true;
+      }
+      else if(event["path"][i].className == "buttonEdit") {
+          isButton = true;
+          break;
+      }
+    }
+    if(!isIncluded && !isButton && this.isModalOn) {
+      this.toggleModal({idInter: 0, name: ""});
+    }
+  }
+
   constructor(private http: HttpClient) { }
+
+  toggleModal(inter:any) {
+    this.newTitle = "";
+    this.displayError = "none"
+    this.selectedIdInter = inter.idInter;
+    this.selectedName = inter.name;
+    if(!this.isModalOn) {
+      this.displayModal = "block";
+      this.isModalOn = true;
+    }
+    else {
+      this.displayModal = "none";
+      this.isModalOn = false;
+    }
+  }
+
+  editName(idInter:any) {
+    this.displayError = "none";
+    if(this.newTitle.length == 0) {
+      this.displayError = "block";
+    }
+    else {
+      this.http.post<any>('http://localhost:8888/api/editinterventionname', {idInter: idInter, newname: this.newTitle}).subscribe(data => {
+        this.generateInterList();
+        this.displayModal = "none"
+      })
+    }
+  }
 
   generateInterList(){
     var x:any [] = [];
@@ -30,8 +84,12 @@ export class ReplaysComponent implements OnInit {
 
           date += datetime[8] + datetime[9] + " " + monthList[month-1] + " " + datetime[0] + datetime[1] + datetime[2] + datetime[3];
           x[i]["startTime"] = date;
+          // alert(x[i]["name"]);
+          if(!x[i]["name"]) {
+            x[i]["name"] = "[Intervention]"
+          }
           if(x[i]["commune"] == null && x[i]["street"] == null) {
-            x[i]["commune"] = "---Localisation inconnue---";
+            x[i]["commune"] = "[Localisation inconnue]";
             x[i]["street"] = " ";
           } else if (x[i]["commune"] == null) {
             x[i]["commune"] = " ";
@@ -42,46 +100,10 @@ export class ReplaysComponent implements OnInit {
           }
         }
         this.getVideoNumber(x);
-        // this.inters = x;
-        
-        // var inters = [];
-        // var sessions = [];
-        // for(let i=0;i<x.length;i++) {
-        //   console.log(x[i])
-        // }
-        // mp4 = mp4.filter(e => e[0].endsWith('mp4'));
-        // 
-        // var currentInter:any[] = [];
-        // if(mp4.length != 1) {
-        //   for(let i=0; i<mp4.length-1; i++) {
-        //     var val1 = new Date(mp4[i][1]).getTime();
-        //     var val2 = new Date(mp4[i+1][1]).getTime();
-            
-        //     if(i==0) {
-        //       currentInter.push(mp4[i]);
-        //     }
-        //     if((val2-val1) < 1200000 && (val2-val1) > -1200000) { //Si moins de 20 min (1.200.000 ms)
-        //       currentInter.push(mp4[i+1]);
-        //     } else {
-        //       inters.push(currentInter);
-        //       currentInter = [mp4[i+1]];
-        //     }
-        //     if(i == mp4.length-1) {
-        //       inters.push(currentInter);
-        //     }
-        //   }
-        // } else {
-        //   currentInter.push(mp4[0]);
-        //   inters.push(currentInter);
-        // }
-        
-        // this.inters = inters;
-        // 
       },
       error => {
         this.displayLoading = "none";
       });
-      
   }
 
   checkImage(imageSrc:string, good:any, bad:any) {
@@ -102,14 +124,29 @@ export class ReplaysComponent implements OnInit {
       error => {
         this.displayLoading = "none";
       });
+      this.http.get("http://localhost:8888/api/statsByInter?id=" + data[j]["idInter"])
+      .subscribe(result => {
+        var x = JSON.parse(JSON.stringify(result))
+        if(x.length == 0)  {
+          data[j]["isStats"] = "Aucun vol enregistré";
+        } else if (x.length == 1) {
+          data[j]["isStats"] = x.length + " vol";
+        } else {
+          data[j]["isStats"] = x.length + " vols";
+        } 
+      },
+      error => {
+        this.displayLoading = "none";
+      });
     }
     this.inters = data;
+    console.log(this.inters)
     this.displayLoading = "none";
   }
 
 
   checkIfNewVideos(dbData:any) {
-    this.http.get("http://192.168.13.110:8080/replay")
+    this.http.get("http://192.168.13.110:8080/getreplays")
     // this.http.get("http://localhost:8888/api/videoFileNameList")
       .subscribe(result => {
         var x = JSON.parse(JSON.stringify(result));
@@ -151,8 +188,8 @@ export class ReplaysComponent implements OnInit {
         if(videoResult.length != 0) {
           this.http.get("http://localhost:8888/api/lastInter")
             .subscribe(res2 => {
-              var interResult = JSON.parse(JSON.stringify(res2))
-              var date = (interResult[0]["startTime"]).slice(0, 19).replace('T', ' ');
+              var interResult = JSON.parse(JSON.stringify(res2));
+              var date = (interResult[0]["recordTime"]).slice(0, 19).replace('T', ' ');
               var dateLastInter = new Date(date).getTime();
 
               if(videoResult.length == 1) {
@@ -160,7 +197,7 @@ export class ReplaysComponent implements OnInit {
                 if((timeValue-dateLastInter) < 1200000 && (timeValue-dateLastInter) > -1200000) { //Si moins de 20 min (1.200.000 ms)
                   this.setInterToVideo(videoResult[0]["fileName"], interResult[0]["idInter"])
                 } else {
-                  this.createInter([[[videoResult[0]["fileName"], (videoResult[0]["recordTime"]).slice(0, 19).replace('T', ' ')]]], interResult[0]["idInter"]);
+                  this.createInter([[[videoResult[0]["fileName"], (videoResult[0]["recordTime"]).slice(0, 19).replace('T', ' ')]]]);
                 }
               } 
               else {
@@ -191,7 +228,7 @@ export class ReplaysComponent implements OnInit {
                   }
                 }
                 interToAdd.push(videoToAdd);
-                this.createInter(interToAdd, interResult[0]["idInter"])
+                this.createInter(interToAdd)//["idInter"])
               }
             },
             error => {
@@ -205,7 +242,7 @@ export class ReplaysComponent implements OnInit {
   }
 
   addVideoToDb(data:any) {
-    this.http.post<any>('http://localhost:8888/api/newvideo', {fileName: data[1], videoName: 'flag', recordTime: data[0]}).subscribe(data => {
+    this.http.post<any>('http://localhost:8888/api/newvideo', {fileName: data[1], videoName: data[1], recordTime: data[0]}).subscribe(data => {
       //  console.log(data);
     },
     error => {
@@ -222,25 +259,31 @@ export class ReplaysComponent implements OnInit {
     })
   }
 
-  createInter(data:any[][], maxIdInter: number) {
-    var newId = maxIdInter
+  createInter(data:any[][]){//, maxIdInter: number) {
+    console.log(data);
     for(let i=0;i<data.length; i++) {
-      newId++;
-      this.http.post<any>('http://localhost:8888/api/newinter', {idInter: newId, startTime: data[i][0][1]}).subscribe(data => {
-        //  console.log(data);
+      this.http.post<any>('http://localhost:8888/api/newinter', {startTime: data[i][0][1]})
+      .subscribe(data2 => {
+      for(let j=0; j<data[i].length; j++) {
+        this.setInterToVideo(data[0][j][0], data2.insertId);
+      }
       },
       error => {
+        console.log(error)
         this.displayLoading = "none";
       });
-      for(let j=0; j<data[i].length; j++) {
-        this.setInterToVideo(data[i][j][0], newId);
-      }
+      
     }
     
   }
 
   moveToInterReplay(inter:any) {
-    window.location.href = '/replay?id=' + inter["idInter"];
+    if(inter.numberOfVideos == 0) {
+      return;
+    } else {
+      window.location.href = '/replay?id=' + inter["idInter"];
+    }
+    
   }
 
   moveToInterStats(inter:any) {
@@ -260,7 +303,38 @@ export class ReplaysComponent implements OnInit {
     return res;
   }
 
+  getDroits() {
+    var mail = this.getCookie("email");
+    var url = "http://localhost:8888/api/droits?mail=" + mail; 
+    this.http.get(url)
+      .subscribe(result => {
+        var x = JSON.parse(JSON.stringify(result))[0];
+        if(!x.isSuperAdmin && !x.isAdmin) {
+          window.location.href = "/";
+        }
+      },
+      error => {
+       console.log(error);
+      });
+  }
+
+  getCookie(name: string) {
+    let ca: Array<string> = document.cookie.split(';');
+    let caLen: number = ca.length;
+    let cookieName = `${name}=`;
+    let c: string;
+
+    for (let i: number = 0; i < caLen; i += 1) {
+        c = ca[i].replace(/^\s+/g, '');
+        if (c.indexOf(cookieName) == 0) {
+            return c.substring(cookieName.length, c.length);
+        }
+    }
+    return '';
+  }
+
   ngOnInit(): void {
+    this.getDroits();
     // this.checkIfNewVideos("aze");
     // this.http.get("http://192.168.13.110:8080/replay")
     this.http.get("http://localhost:8888/api/videoFileNameList")

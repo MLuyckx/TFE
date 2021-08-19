@@ -1,21 +1,17 @@
-/* body {
-    overflow-x: hidden;
-} */
-
 body {
     display: flex;
     overflow-x: hidden;
     flex-direction: column;
-    /* height: 100vh; */
-    /* width: 100%; */
 }
 
 main {
-    display: flex;
-    width: 88vw;
+    display:inline-flex;
+    width: 44vw;
     height: 80vh;
-    margin-left: 6vw;
-    border: 1px solid black;
+    margin-right: 3vw;
+    border: 1px solid black; 
+    float: right;
+    /* z-index: 100; */
 }
 
 .map-container {
@@ -104,3 +100,15 @@ footer {
     background-color: var(--header-color);
     padding: 1em;
 }
+
+@media only screen and (max-width: 400px) {
+    main {
+        display:inline-flex;
+        width: 88vw;
+        height: 80vh;
+        margin-left: 6vw;
+        border: 1px solid black; 
+    }
+}
+
+

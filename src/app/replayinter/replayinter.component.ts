@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 import videojs from 'video.js';
 
 @Component({
@@ -17,13 +17,39 @@ export class ReplayinterComponent implements OnInit {
   styleChoixInter = "block";
   
   interId: number = 0;
+  videoName: string = "Unknown";
+  fileName: string = "";
+  fileNameDownload: string = "";
   interData: any;
-  sourceData:string= "https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8"
-  videoSource:Object = { autoplay: true, controls: true, sources: [{ src: this.sourceData, type: 'application/x-mpegURL' }]};
+  sourceData:string= "unknow.mp4"
+  videoSource:Object = { autoplay: false, controls: true, sources: [{ src: this.sourceData, type: 'video/mp4' }]};
   styleVideo = "width: 500px; height: 250px;"
+  displayModal = "none";
+  isModalOn = false;
+  newTitle = "";
+  displayError = "none";
+  fileUrl = "";
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: any) {
+    var isIncluded = false;
+    var isButton = false;
+    for(let i=0;i<event["path"].length; i++) {
+      if(event["path"][i].className == "modal-content") {
+        isIncluded = true;
+      }
+      else if(event["path"][i].className == "edit") {
+          isButton = true;
+          break;
+      }
+    }
+    if(!isIncluded && !isButton && this.isModalOn) {
+      this.toggleModal();
+    }
+  }
 
   checkIfNewVideos(dbData:any) {
-    this.http.get("http://192.168.13.110:8080/replay")
+    this.http.get("http://192.168.13.110:8080/getreplays")
     // this.http.get("http://localhost:8888/api/videoFileNameList")
       .subscribe(result => {
         var x = JSON.parse(JSON.stringify(result));
@@ -68,8 +94,8 @@ export class ReplayinterComponent implements OnInit {
     })
   }
 
-  changeSrc(newSrc:string) {
-    var source = "http://192.168.13.110:8080/replay/" + newSrc + ".mp4"
+  changeSrc(newSrc:string, videoName: string) {
+    var source = "http://192.168.13.110:8080/getreplays/" + newSrc + ".mp4"
     // console.log(newSrc)
     // this.videoSource = { autoplay: true, controls: true, sources: [{ src: "", type: 'application/x-mpegURL' }]};
     if(this.target != undefined && this.player != undefined) {
@@ -78,10 +104,68 @@ export class ReplayinterComponent implements OnInit {
       this.player.src(source);
       window.scrollTo({top: 0, behavior: 'smooth'});
     }
+    this.fileUrl = "/getreplays/" + newSrc + ".mp4";
+    this.fileName = newSrc;
+    this.fileNameDownload = newSrc + ".mp4"
+    this.videoName = videoName;
     // console.log('okok')
   }
 
+  toggleModal() {
+    if(!this.isModalOn) {
+      this.displayModal = "block";
+      this.isModalOn = true;
+    }
+    else {
+      this.displayModal = "none";
+      this.isModalOn = false;
+    }
+  }
+
+  editName() {
+    this.displayError = "none";
+    if(this.newTitle.length == 0) {
+      this.displayError = "block";
+    }
+    else {
+      this.http.post<any>('http://localhost:8888/api/editvideoname', {fileName: this.fileName, newname: this.newTitle}).subscribe(data => {
+        window.location.href = window.location.href; 
+      })
+    }
+  }
+
+  getDroits() {
+    var mail = this.getCookie("email");
+    var url = "http://localhost:8888/api/droits?mail=" + mail; 
+    this.http.get(url)
+      .subscribe(result => {
+        var x = JSON.parse(JSON.stringify(result))[0];
+        if(!x.isSuperAdmin && !x.isAdmin) {
+          window.location.href = "/";
+        }
+      },
+      error => {
+       console.log(error);
+      });
+  }
+
+  getCookie(name: string) {
+    let ca: Array<string> = document.cookie.split(';');
+    let caLen: number = ca.length;
+    let cookieName = `${name}=`;
+    let c: string;
+
+    for (let i: number = 0; i < caLen; i += 1) {
+        c = ca[i].replace(/^\s+/g, '');
+        if (c.indexOf(cookieName) == 0) {
+            return c.substring(cookieName.length, c.length);
+        }
+    }
+    return '';
+  }
+
   ngOnInit(): void {
+    this.getDroits();
     if(this.target != undefined) {
       this.player = videojs(this.target.nativeElement, this.videoSource, function onPlayerReady() {});
     }
@@ -99,10 +183,12 @@ export class ReplayinterComponent implements OnInit {
       .subscribe(result => {
         var videoResult = JSON.parse(JSON.stringify(result));
         for(let i=0;i<videoResult.length; i++) {
+          if(i==0) {
+            this.changeSrc(videoResult[i]["fileName"], videoResult[i]["videoName"]);
+          }
           videoResult[i]["miniature"] = "http://192.168.13.110:8080/img/" + videoResult[i]["fileName"] + ".jpg";
         }
         this.interData = videoResult;
-        console.log(this.interData)
       });
   }
   ngOnDestroy() {

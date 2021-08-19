@@ -1,31 +1,30 @@
-<link href="https://vjs.zencdn.net/7.11.4/video-js.css" rel="stylesheet">
-<link href="../videojs/videojs-resolution-switcher.css" rel="stylesheet">
 <link href='https://css.gg/play-button.css' rel='stylesheet'>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/video.js/5.10.2/alt/video-js-cdn.css" rel="stylesheet">
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/5.10.2/video.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/3.0.2/videojs-contrib-hls.js"></script>
-<app-header></app-header>
-<div id="newFluxDiv">
+
+<!-- <div id="newFluxDiv">
     <p id="newFlux">Une retransmission en direct est en cours.</p>
-    <button id="buttonLive" (click)="changeSrc('live')">Voir le live</button>
-</div>
+    <div id="buttonLive" (click)="changeSrc('getdirectlive/index.m3u8')"><p>Voir le live</p></div>
+</div> -->
+
+
 <div id="contenu">
-  <video id="my-video" class="vjs-styling video-js" controls preload="auto" poster="" data-setup='{"fluid":true}'>
-   
-    <!-- <source src="https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8" -->
-    <source src="http://192.168.13.110:8080/live/index.m3u8"
-    
-    
+  <video id="my-video" class="vjs-styling video-js" controls preload="auto" poster="" data-setup='{"fluid":true}' width="500px" height="250px">
+    <source [src]="sourceLive"
      type='application/x-mpegURL'>
     <p class="vjs-no-js">
       To view this video please enable JavaScript, and consider upgrading to a web browser that
       <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
     </p>
   </video>
+  <!-- <video #target class="vjs-styling video-js"  width="250px" height="500px"></video> -->
 </div>
-<!-- <button (click)="changeSrc('live')" id="backToLive">Retourner à la retransmission en direct</button> -->
 
 <script src="../videojs/videojs-resolution-switcher.js"></script>
 <!-- Génération d'un lien sécurisé (Component externe) -->
-<div id="secureLinkDiv">
+<div id="secureLinkDiv" *ngIf=displaySecureLink>
     <app-securelink></app-securelink>
 </div>

@@ -12,11 +12,11 @@ import { StatisticsComponent } from './statistics/statistics.component';
 
 const routes: Routes = [
   {path: 'live', component: LivestreamComponent},
-  {path: 'replays', component: ReplaysComponent},
+  {path: 'inters', component: ReplaysComponent},
   {path: 'replay', component: ReplayinterComponent},
   {path: 'stats', component: StatisticsComponent},
-  {path: 'carto', component: CartographyComponent},
-  {path: 'limited/live', component: LivestreamComponent},
+  // {path: 'carto', component: CartographyComponent},
+  {path: 'limited', component: LivestreamComponent},
   {path: '**', component: HomeComponent},
 ];
 

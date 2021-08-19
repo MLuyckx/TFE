@@ -6,22 +6,40 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/5.10.2/video.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/3.0.2/videojs-contrib-hls.js"></script>
 
-<app-header></app-header>
 <div id="contenu">
     <video #target class="vjs-styling video-js"  width="250px" height="500px"></video>
 
-    <p>Nom de la video ici</p>
+    <p>{{videoName}}</p>
+    <div>
+      <img src="../../assets/edit.png" (click)="toggleModal()" class="edit">
+      <a [href]="fileUrl" class="buttonDownload" download={{fileNameDownload}}><img src="../../assets/download.png" class="download"></a>
+    </div>
 </div>
 
 <div class="mainDiv">
   <div *ngFor="let data of interData" [style.display] = styleChoixInter>
-    <div class="interDiv" (click)="changeSrc(data['fileName'])">
+    <div class="interDiv" (click)="changeSrc(data['fileName'], data['videoName'])">
         <img src="{{data.miniature}}" class="miniature">
 
-        <div class="infoVideo">{{data.fileName}}</div>
+        <div class="infoVideo">{{data.videoName}}</div>
     </div>
   </div>
 </div>
 
+<div id="myModal" class="modal" [style.display]=displayModal>
+  <div class="modal-box">
+      <div class="modal-content">
+          <span class="close" (click)="toggleModal()">&times;</span>
+          <div id="secureLinkmainDiv">
+              <div id="secureLinkDataDiv">
+                <p class="videoName">{{videoName}}</p>
+                <div class="editDiv"><input type="text" placeholder="Renommer la vidéo" class="editPlace" [(ngModel)]="newTitle"></div>
+                <div class="editDiv"><span class="errorInput" [style.display]=displayError>Veuillez insérer un nom valide</span></div>
+                <div class="submitButton" (click)="editName()"><p>Confirmer</p></div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
 
 <script src="../videojs/videojs-resolution-switcher.js"></script>

@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ViewEncapsulation } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import videojs from 'video.js';
 
 // var videoLink: string = "https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8";
-var videoLink: string = "http://192.168.13.110:8080/live/index.m3u8"
+var videoLink: string = "http://192.168.13.110:8080/live/index.m3u8";
 
 @Component({
   selector: 'app-livestream',
@@ -13,38 +13,63 @@ var videoLink: string = "http://192.168.13.110:8080/live/index.m3u8"
   encapsulation: ViewEncapsulation.None
 })
 export class LivestreamComponent implements OnInit {
+  displaySecureLink = false;
 
-  constructor(private http: HttpClient) {
+  sourceLive = "http://192.168.13.110:8080/getdirectlive/index.m3u8";
 
+  constructor(private http: HttpClient) {}
+
+  updateFlux() {
+    this.http.get("http://192.168.13.110:8080/getdirectlive")
+      .subscribe(result => {  
+        console.log(result)
+      },
+      error => {});
+    
+    setTimeout(()=>{ 
+      this.updateFlux();
+    }, 30000)
   }
-  public videoJsConfigObj = {
-    preload: "metadata",
-    controls: true,
-    autoplay: false,
-    overrideNative: true,
-    techOrder: ["html5", "flash"],
-    html5: {
-        nativeVideoTracks: true,
-        nativeAudioTracks: false,
-        nativeTextTracks: false,
-        hls: {
-            withCredentials: false,
-            overrideNative: true,
-            debug: true
+
+  getDroits() {
+    var mail = this.getCookie("email");
+    var url = "http://localhost:8888/api/droits?mail=" + mail; 
+    this.http.get(url)
+      .subscribe(result => {
+        var x = JSON.parse(JSON.stringify(result))[0];
+        if(x.isSuperAdmin) {
+          this.displaySecureLink = true;
+        } else if (x.isAdmin) {
+          this.displaySecureLink = true;
+        } else if (x.isDispatch) {
+          this.displaySecureLink = false;
+        }
+        else {
+          this.displaySecureLink = false;
+        }
+      },
+      error => {
+       console.log(error);
+      });
+  }
+
+  getCookie(name: string) {
+    let ca: Array<string> = document.cookie.split(';');
+    let caLen: number = ca.length;
+    let cookieName = `${name}=`;
+    let c: string;
+
+    for (let i: number = 0; i < caLen; i += 1) {
+        c = ca[i].replace(/^\s+/g, '');
+        if (c.indexOf(cookieName) == 0) {
+            return c.substring(cookieName.length, c.length);
         }
     }
-  };
-
-  changeSrc(src:string) {
-    var source:any = "http://192.168.13.110:8080/replay/" + source;
-    // window.player.updateSrc([
-    //     { type: "video/mp4", src: source, label:'HD' }
-    // ]);
-    // document.getElementById("backToLive").style.display = "block";
+    return '';
   }
 
   ngOnInit() {
-    var player = videojs('my-video', this.videoJsConfigObj);
+    this.getDroits();
   }
 
 }

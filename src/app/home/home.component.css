@@ -1,35 +1,55 @@
+.homeMainDiv {
+    position: absolute;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    min-height: 60vh;
+    background-image: url(../../assets/bgImage.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    filter: blur(6px);
+    /* -webkit-filter: blur(8px); */
+}
+
 .square {
     width: 34vw;
-    height: 30vh;
+    height: 60vh;
     background-color: rgb(214, 214, 214);
     text-align: center; 
     border-radius: 25px;
+    margin-top: -60vh
 }
 
 .square:hover {
     background-color: rgb(190, 190, 190);
+    cursor: pointer;
 }
 
 .text {
     position: relative;
-    font-size: 17px;
-    margin-top: 13vh;
+    font-size: 3vh;
+    margin-top: 28.5vh;
     color: black;
 }
 
 .leftDiv {
-    margin: 2% 2% 2% 13%;
+    margin: 2vw 3vw 2vw 10vw;
     float: left;
     
 }
 
 .rightDiv {
-    margin: 2% 13% 2% 2%;
+    margin: 2vw 10vw 2vw 3vw;
     float: right;
 }
 
 .link {
-    text-decoration: none;
+    text-decoration: none;;
+}
+
+.homeComponent {
+    height: 80%;
 }
 
 @media only screen and (max-width: 550px) {

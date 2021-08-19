@@ -30,6 +30,15 @@
     background-color: rgb(214, 214, 214);
 }
 
+.linkButton:hover, .copyButton:hover {
+    cursor: pointer;
+    background-color: rgb(190, 190, 190);
+}
+
+.linkButton > p {
+    padding: 2vh 2vw;
+}
+
 .copyButton {
     text-align: center;
     position: relative;
@@ -40,14 +49,7 @@
     background-color: rgb(214, 214, 214);
 }
 
-.linkButton:hover, .copyButton:hover {
-    cursor: pointer;
-    background-color: rgb(190, 190, 190);
-}
 
-.linkButton > p {
-    padding: 2vh 2vw;
-}
 
 .copyButton > p {
     padding: 1.5vh 1.5vw;

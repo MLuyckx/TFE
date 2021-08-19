@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import videojs from 'video.js';
 
@@ -12,90 +13,108 @@ import videojs from 'video.js';
 })
 
 export class AppComponent {
-    
-// public videoJsConfigObj = {
-//   preload: "metadata",
-//   controls: true,
-//   autoplay: false,
-//   overrideNative: true,
-//   techOrder: ["html5", "flash"],
-//   html5: {
-//       nativeVideoTracks: true,
-//       nativeAudioTracks: false,
-//       nativeTextTracks: false,
-//       hls: {
-//           withCredentials: false,
-//           overrideNative: true,
-//           debug: true
-//       }
-//   }
-// };
-ngOnInit() {
 
-// var player = videojs('my-video', this.videoJsConfigObj);
+  isConnected = false;
+  access = [];
+  tryingToConnect = false;
 
-}
+  constructor(private http: HttpClient) { }
 
+  connection() {
+    var token = this.getCookie('token');
+    if(!token) {
+      var url = "";
+      var code = window.location.href.split('?')[1];
+      if(!code || !code.startsWith("code=")) {
+        
+        url = "http://localhost:8888/connexion";
+        this.http.get(url,  {responseType: 'text'})
+        .subscribe(result => {
+          var x = JSON.parse(JSON.stringify(result));
+          var split = x.split('&flowName');
+          var url = split[0] + "&hd=incendiebw.be&flowName" + split[1]
+          window.location.href = url;
+        },
+        error => {
+          console.log(error)
+          this.tryingToConnect = false;
+        });
+      } else {
+          url = "http://localhost:8888/connexion?" + code;
+          this.http.get(url, {responseType: 'text'})
+          .subscribe(result => {
+            var x = JSON.parse(JSON.stringify(result.substring(1, result.length-1)));
+            x = JSON.parse(x)
+            if(x["infos"]["email"].endsWith("@incendiebw") || x["infos"]["email"] == "luyckx.matthieu@gmail.com") {
+              this.setCookie('token', x["token"], 1);
+              this.setCookie('email', x["infos"]["email"],1)
+            } else {
+              alert("Cette adresse mail n'est pas autorisée. Veuillez réessayer")
+            }
+            
+            window.location.href = '/'
+          },
+          error => {
+            console.log(error)
+          });      
+      }
+    } else {
+      var token = this.getCookie('token');    
+      url = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=" + token;
+      this.http.get(url)
+      .subscribe(result => {
+        this.isConnected = true;
+      },
+      error => {
+        if(error.status == 400) {
+          this.isConnected = false;
+          this.deleteCookie('token');
+          this.connection();
+        } else {
+          console.log(error)
+        }
+      });
+    }
+  }
 
-  title = 'zsbwDrone';
+  getCookie(name: string) {
+    let ca: Array<string> = document.cookie.split(';');
+    let caLen: number = ca.length;
+    let cookieName = `${name}=`;
+    let c: string;
 
-  // changeSrc(source: string) {
-  //   if(source == "live") {
-  //       window.location.href = window.location.href;
-  //   }
-  //   else {
-  //       var source = "http://192.168.13.110:8080/replay/" + source;
-  //       window.player.updateSrc([
-  //           { type: "video/mp4", src: source, label:'HD' }
-  //       ]);
-  //       document.getElementById("backToLive").style.display = "block";
-  //   }
-  //   window.scrollTo({top: 0, behavior: 'smooth'})
-  // }
+    for (let i: number = 0; i < caLen; i += 1) {
+        c = ca[i].replace(/^\s+/g, '');
+        if (c.indexOf(cookieName) == 0) {
+            return c.substring(cookieName.length, c.length);
+        }
+    }
+    return '';
+  }
 
-  // notification(text: string) {
-  //     document.getElementById("newFlux").innerText = text;
-  //     document.getElementById("newFluxDiv").style.display = "block";
-  // }
+  deleteCookie(name: string) {
+      this.setCookie(name, '', -1);
+  }
 
-  // stopNotification() {
-  //     document.getElementById("newFluxDiv").style.display = "none";
-  // }
+  setCookie(name: string, value: string, expireDays: number, path: string = '') {
+    let d:Date = new Date();
+    d.setTime(d.getTime() + expireDays * 24 * 60 * 60 * 1000);
+    let expires:string = `expires=${d.toUTCString()}`;
+    let cpath:string = path ? `; path=${path}` : '';
+    document.cookie = `${name}=${value}; ${expires}${cpath}`;
+  }
 
-  // getFlux() {
-  //     var xhttp = new XMLHttpRequest();
-  //     xhttp.onreadystatechange = function() {
-  //         if (this.readyState == 4 && this.status == 200) {
-  //             var data = JSON.parse(this.responseText);
-  //             if(data.length != 0) {
-  //                 var isStreaming = false;
-  //                 for(file in data) {
-  //                     if(data[file].name == "index.m3u8") {
-  //                         isStreaming = true;
-  //                     }
-  //                 }
-  //                 if(isStreaming) {
-  //                   this.notification('Une retransmission en direct est en cours.');
-  //                     document.getElementById("buttonLive").style.display = "auto";
-  //                 }
-  //                 else {
-  //                   this.stopNotification();
-  //                     document.getElementById("buttonLive").style.display = "none";
-  //                 }
-  //             }
-  //             else {
-  //                 this.stopNotification();
-  //                 document.getElementById("buttonLive").style.display = "none";
-  //             }
-  //         };
-  //     }
-  //     xhttp.open("GET", "http://192.168.13.110:8080/live", true);
-  //     xhttp.send();
-  // }
+  ngOnUpdate() {
+    // if(!this.isConnected) {
+    //   this.connection();
+    // }
+  }
 
-  // updateFlux() {
-  //     this.getFlux();
-  //     setTimeout(this.updateFlux, 30000)
-  // }
+  ngOnInit() {
+    this.isConnected = false;
+    this.connection();
+  }
+  
+  title = 'Drone - ZSBW';
 }
 

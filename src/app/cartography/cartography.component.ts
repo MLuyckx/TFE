@@ -27,7 +27,7 @@ import { HttpClient } from '@angular/common/http';
 export class CartographyComponent implements OnInit {
 
   dataJson:any = [];
-  @Input("idVol") idVol!:any;
+  @Input() idVol:any;
   constructor(private http: HttpClient) {
       
    }
@@ -43,7 +43,7 @@ export class CartographyComponent implements OnInit {
   currentGbYaw: number = 0;
 
   vectorLineLayer:any;
-  vectorLine: any;
+  vectorLine: any= new VectorSource({});
   vectorPoint: any;
   vectorPointLayer: any;
   featurePoint: any;
@@ -90,16 +90,19 @@ export class CartographyComponent implements OnInit {
   changeHourFormat(hour:string) {
     var piece = hour.split(":")
     if(hour[hour.length-2] == 'P'){
-        if(parseInt(piece[0]) == 12) {
-            var heures = "00";
-        } else {
-            var heures = (parseInt(piece[0]) + 12).toString();
-        }
-    } else {
-        if(parseInt(piece[0]) < 10) {
-            var heures = "0" + piece[0];
-        }
+      if(parseInt(piece[0]) == 12) {
         var heures = piece[0];
+      } else {
+        var heures = (parseInt(piece[0]) + 12).toString();
+      }
+    } else {
+      if(parseInt(piece[0]) == 12) {
+        var heures = "00";
+      }
+      if(parseInt(piece[0]) < 10) {
+          var heures = "0" + piece[0];
+      }
+      var heures = piece[0];
     }
     var minutes = piece[1];
     var secondes = piece[2].substring(0,2);
@@ -110,6 +113,12 @@ export class CartographyComponent implements OnInit {
   // Change le format du temps de vol (secondes -> minutes/secondes)
   // changeFlightTimeFormat(61) -> 1m01s
   changeFlightTimeFormat(flightTime: string) {
+    if(flightTime.includes(",")) {
+      flightTime = flightTime.replace(/,/g, "");
+    }
+    if(flightTime.includes('"')) {
+      flightTime = flightTime.replace(/"/g, "");
+    }
     if(flightTime.includes(".")) {
         var ftInt = parseInt(flightTime.split(".")[0]);
     } else {
@@ -163,7 +172,6 @@ export class CartographyComponent implements OnInit {
   // Donné à chaque segment sous forme de propriété les données de vol
   drawAircraftGps() {
     var featureLine;
-    this.vectorLine = new VectorSource({});
     var points;
     for(let i=1; i<this.dataJson.length; i++) { 
       points = [[parseFloat(this.dataJson[i-1]["longitude"]), parseFloat(this.dataJson[i-1]["latitude"])], [parseFloat(this.dataJson[i]["longitude"]), parseFloat(this.dataJson[i]["latitude"])]]
@@ -197,6 +205,25 @@ export class CartographyComponent implements OnInit {
     }
   }
 
+  ngOnChanges() {
+    console.log(this.idVol)
+    for(let i=0;i<this.idVol.length; i++) {
+      var url = "http://localhost:8888/api/livedata?id=" + this.idVol[i]["idVol"];
+      // var url = "http://localhost:8888/api/livedata?id=9";
+      this.http.get(url)
+      .subscribe(result => {
+          var res = JSON.parse(JSON.stringify(result))
+          if(res.length != 0) {
+              this.dataJson = res;
+              this.drawAircraftGps();
+          }
+      },
+      error => {
+          //TODO
+      });
+    }
+  }
+
   ngOnInit(): void {
     this.map = new Map({
       view: new View({
@@ -216,21 +243,7 @@ export class CartographyComponent implements OnInit {
     this.map.on('click', (evt) => {
         this.onPointerMoveAndClick(evt)
     })
-    var url = "http://localhost:8888/api/livedata?id=" + this.idVol;
-    // var url = "http://localhost:8888/api/livedata?id=9";
-    console.log(url)
-    this.http.get(url)
-    .subscribe(result => {
-        console.log(result);
-        var res = JSON.parse(JSON.stringify(result))
-        if(res.length != 0) {
-            this.dataJson = res;
-            console.log(this.dataJson);
-            this.drawAircraftGps();
-        }
-    },
-    error => {
-        //TODO
-    });
+
+    console.log(this.idVol)
   }
 }

@@ -1,11 +1,4 @@
-<body>
-    <app-header></app-header>
-
-    <div *ngFor="let id of idVol" [style.display] = "showFilesStyle" id="mainDiv">
-        <p>Essai {{id}}</p>
-        <app-cartography idVol={{id}}></app-cartography>
-    </div>
-    
+<div>
     <div [style.display] = "loadFilesStyle">
         <input #myInput type="file" id="file-selector" (change)="readFile($event)" accept=".csv">
         <div id="uploadFile" (click)="chooseFile()">
@@ -13,13 +6,40 @@
         </div>
         <mat-progress-bar class="loading" mode="indeterminate" [style.display] = displayLoading></mat-progress-bar>
     </div>
+    <div class="carto">
+        <app-cartography [idVol]=idVol [style.display] = "cartoDisplay"></app-cartography>
+    </div>
 
-    
+    <div *ngFor="let id of idVol index as i" [style.display] = "showFilesStyle" class="mainDiv">
+        <p class="date"><b>Vol n°{{i+1}}</b></p>
+        <hr class="horizontalrow">
+        <p class="listItems">Heure de décollage : <b>{{id.startTime}}</b></p>
+        <p class="listItems">Temps de vol : <b>{{id.flightTime}}</b></p>
+        <p class="listItems">Altitude maximale : <b>{{id.maxHeight}}m</b></p>
+        <div class="linkButton" (click)="toggleModal(id.idVol)"><p>Warnings durant le vol</p></div>
+        <p class="graphTitle">Evolution de la batterie en fonction du temps</p>
+        <hr class="horizontalrow">
+        <img [src]=id.batteryGraph class="graphBattery">
+        <p class="graphTitle">Evolution de l'altitude en fonction du temps</p>
+        <hr class="horizontalrow">
+        <img [src]=id.heightGraph class="graphHeight">
+    </div>
 
     <div id="graph1" style="display: none">
         <canvas #canvasBattery [width] = widthBattery [height] = heightBattery></canvas>
         <canvas #canvasAltitude [width] = widthAltitude [height] = heightAltitude></canvas>
     </div>
-    <!-- <p>{{dataJson}}</p> -->
-    <!-- <img src={{imageUrl}} alt="erreur"> -->
-</body>
+
+    <div id="myModal" class="modal" [style.display]=displayModal>
+        <div class="modal-box">
+            <div class="modal-content">
+                <span class="close" (click)="toggleModal('')">&times;</span>
+                <div id="secureLinkmainDiv">
+                    <div *ngFor="let warn of warnings index as i" id="secureLinkDataDiv">
+                        <p>{{warn.time}} : {{warn.warning}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

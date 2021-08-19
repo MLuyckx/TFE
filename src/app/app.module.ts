@@ -16,6 +16,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import { CartographyComponent } from './cartography/cartography.component';
 import { ReplayinterComponent } from './replayinter/replayinter.component';
+import { FooterComponent } from './footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { ReplayinterComponent } from './replayinter/replayinter.component';
     HomeComponent,
     StatisticsComponent,
     CartographyComponent,
-    ReplayinterComponent
+    ReplayinterComponent,
+    FooterComponent
   ],
   imports: [
     ChartsModule,
@@ -39,6 +41,6 @@ import { ReplayinterComponent } from './replayinter/replayinter.component';
     MatProgressBarModule
   ],
   providers: [],
-  bootstrap: [AppComponent, StatisticsComponent]
+  bootstrap: [AppComponent]
 })
 export class AppModule { }

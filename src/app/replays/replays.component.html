@@ -1,13 +1,12 @@
 <mat-progress-bar class="loading" mode="indeterminate" [style.display] = displayLoading></mat-progress-bar>
-<app-header></app-header>
-<div *ngFor="let inter of inters" [style.display] = styleChoixInter id="mainDiv">
+<div *ngFor="let inter of inters" [style.display] = styleChoixInter class="mainDiv">
         <div class="interDiv" (click)="moveToInterReplay(inter)">
             <img src="../../assets/camera.png" class="numberVideoImg">
             <p class="numberVideo"><b>{{inter.numberOfVideos}}</b></p>
             <img src="{{inter.imageSource}}" class="miniature" (error)="defaultImage">
 
-            <div class="infoVideo"><p>{{inter.commune}}{{inter.street}}</p></div>
-            <div class="infoVideo"><p>{{inter.startTime}}</p></div>
+            <div class="infoVideo"><p>{{inter.name}}</p></div>
+            <div class="infoVideo"><p>{{inter.commune}}{{inter.street}} - {{inter.startTime}}</p></div>
         </div>
         <div class="interDivChoice">
             <img src="{{inter.imageSource}}" class="miniature" (error)="defaultImage">
@@ -18,9 +17,29 @@
                 </div>
                 <div class="buttonStats" (click)="moveToInterStats(inter)">
                     <img src="../../assets/stats.png" class="choiceImage">
-                    <p>Statistiques</p>
+                    <p>Statistiques ({{inter.isStats}})</p>
+                </div>
+                <div class="buttonEdit" (click)="toggleModal(inter)">
+                    <img src="../../assets/edit.png" class="editImage">
                 </div>
             </div>
-            
         </div>
 </div>
+
+<div id="myModal" class="modal" [style.display]=displayModal>
+    <div class="modal-box">
+        <div class="modal-content">
+            <span class="close" (click)="toggleModal({idInter: 0, name: ''})">&times;</span>
+            <div id="secureLinkmainDiv">
+                <div id="secureLinkDataDiv">
+                  <p class="videoName">{{selectedName}}</p>
+                  <div class="editDiv"><input type="text" placeholder="Renommer l'intervention" class="editPlace" [(ngModel)]="newTitle"></div>
+                  <div class="editDiv"><span class="errorInput" [style.display]=displayError>Veuillez insérer un nom valide</span></div>
+                  <div class="submitButton" (click)="editName(selectedIdInter)"><p>Confirmer</p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- <app-footer class="footer"></app-footer> -->

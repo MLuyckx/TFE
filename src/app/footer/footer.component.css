@@ -1,0 +1,242 @@
+.mainFoot {
+    color: white;
+    font-style: italic;
+    margin-bottom: -20vh;
+    height: 15vh;
+    background-color: #d9001b;
+    width: 100%;
+    text-align: center; 
+    z-index: 10000;
+}
+
+.footText {
+    padding: 3px;
+}
+
+.link {
+    text-decoration: underline;
+    color: white;
+}
+
+.logout {
+    position: relative;
+    float: left;
+    width: 12vw;
+    margin-left : 84vw;
+    margin-top: -7vh;
+    padding: 1vh;
+    background-color: rgb(214, 214, 214);
+    color: black;
+}
+
+.logout:hover {
+    background-color: rgb(190, 190, 190);
+    cursor: pointer;
+}
+
+.admin {
+    position: relative;
+    float: right;
+    width: 12vw;
+    margin-right : 84vw;
+    margin-top: -7vh;
+    padding: 1vh;
+    background-color: rgb(214, 214, 214);
+    color: black;
+}
+
+.admin:hover {
+    background-color: rgb(190, 190, 190);
+    cursor: pointer;
+}
+
+.text {
+    font-size: 20px;
+    padding: 5px;
+}
+
+.droit {
+    width: 20vw;
+    margin: 0 auto;
+    font-size: 16px;
+    
+}
+
+.droit > label {
+  text-align: center;
+}
+
+.edit {
+  width: 30vw;
+  margin: 1vw auto;
+  text-align: center;
+}
+
+.editPlace {
+  width: 30vw;
+}
+
+.title {
+  text-align: center;
+}
+
+.submitButton {
+  text-align: center;
+  position: relative;
+  width: 20vw;
+  height: auto;
+  min-height: 8vh;
+  /* margin-top: 5vh; */
+  margin: 5vh auto 0 auto;
+  background-color: rgb(214, 214, 214);
+}
+
+.submitButton:hover, .copyButton:hover {
+  cursor: pointer;
+  background-color: rgb(190, 190, 190);
+}
+
+.submitButton > p {
+  padding: 2vh 2vw;
+}
+
+table {
+  overflow-x: scroll;
+}
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+th, td {
+  text-align: center;
+  padding: 5px;
+}
+
+th {
+  background-color: #d9001b;
+  color: white;
+}
+
+tr:hover td{
+  background-color: rgb(214, 214, 214);
+  cursor: pointer;
+}
+
+.listUsers {
+  overflow-x: scroll;
+  width: 100%;
+  margin: 5vw 0;
+}
+
+::-webkit-input-placeholder {
+  text-align: center;
+}
+
+.modal {
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow-x: hidden; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  /* Modal Content/Box */
+  .modal-box {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    border: 1px solid #888;
+    width: 90%; /* Could be more or less, depending on screen size */
+  }
+
+  .modal-content {
+    padding: 20px;
+  }
+  
+  /* The Close Button */
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  /* The switch - the box around the slider */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+  }
+  
+  /* Hide default HTML checkbox */
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  /* The slider */
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  input:checked + .slider {
+    background-color: #2196F3;
+  }
+  
+  input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+  }
+  
+  input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }
+  
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 34px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  }

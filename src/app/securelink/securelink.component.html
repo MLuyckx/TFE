@@ -16,7 +16,7 @@
                 <div id="generationInfos" *ngIf="isShown">
                     <p id="link"><a href="{{securedLink}}" target="blank" style="text-decoration:none, underline; color: black;">{{securedLink}}</a></p>
                     <div id="buttons">
-                        <div class="copyButton" (click)="copyLink()"><p>Copier le lien</p></div>
+                        <div class="copyButton" (click)="copyLink()"><p>{{copyText}}</p></div>
                     </div>
                 </div>
             </div>

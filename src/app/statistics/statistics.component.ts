@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ViewChild, ElementRef, OnInit, AfterViewInit, ViewChildren, QueryList  } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnInit, AfterViewInit, ViewChildren, QueryList, HostListener  } from '@angular/core';
+import { fakeAsync } from '@angular/core/testing';
 import { CartographyComponent } from '../cartography/cartography.component';
 
 @Component({
@@ -10,7 +11,6 @@ import { CartographyComponent } from '../cartography/cartography.component';
 export class StatisticsComponent implements OnInit, AfterViewInit  {
   
   imageUrl = "";
-  // imageUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAD6CAYAAABXq7VOAAAAAXNSR0IArs4c6QAAE7VJREFUeF7t3LGrJdUdB/Dv2mlK7ezSWKQISIqASoIg8R8IFmplYaEIQjoxrohVFgTRQAortZCQ1EkjBLVKFZaANuksAtrGzg0nzsBhcu++ubvvzJv7289tfO++uXPm9zk/93vPzNx7Lft+XJ8Ob/7vvo/W0d0zAreSb5L8KMnPriX/vGcKV+iuBW4lP0ny9yT/uZY8tOuDdXCXLnDt0vd4uTsU6JfraW+XJHAr+XWSn1xLvNm8JFO7uRyBWz/05D+vJX+8nD3ay7kICPRzmSnHSYAAAQIEbiMg0LUHAQIECBAoIHAo0J9N8uMkby3qeyzJ591zjyf5ovv9/iTvJHlxeu4PSV5N8t30e//655J83L32kSQvJHmj27792Sn3Ak2mBAIECBAYL7AM9BbmHyX57SLQW+B+kuSlKcRbOL+f5JkkX02H+XqSh6cQb0+1cP962s+DU4C3Nwlfdj/Pbwjaaz9dvEEQ6OPn3wgECBAgUERgDvR5df3zJP+eVuL9Cr0Fbnsce64F/rtJXukCvn9uDueX292XU9h/NgV7e3Pw5IEzAgK9SJMpgwABAgTGC8yB3kL1+Wl1/ZtFeM9hPwfwfFT9ax5N0kK/rfC/nTaYX/dhfviITzt9vgz0Pyd5M8kH3RuBvmqn3Mf3gBEIECBAoIDAoWvoy9V4f7q8v2beAn0O8aeTPLG4Zt6/EfjL4pT7e1PAt89JHludW6EXaDAlECBAgMA2AlsFersBbnlTXL86b8E+33DX3zBnhb5NHxiFAAECBM5cYMtAX1K10/Pt0a/e26n5/lq8QD/zBnP4BAgQILCNwJpAv4xr6P2p+lZZO43/dpLX8sPXEy6vr7fr7u01An2bPjAKAQIECJy5wJpAbyXe7V3u80fbZq55dd5Oxbe74QX6mTeSwydAgACBqxVYG+h3+zn0vsp+dd7uiO9vunPK/Wr7wegECBAgcKYCawO9lXe33xQ3E7XV/r8W3xR37FvknHI/08Zy2AQIECCwrYDvct/W22gECBAgQGCIgEAfwmqnBAgQIEBgWwGBvq230QgQIECAwBABgT6E1U4JECBAgMC2AgJ9W2+jESBAgACBIQICfQirnRIgQIAAgW0FBPq23kYjQIAAAQJDBAT6EFY7JUCAAAEC2woI9G29jUaAAAECBIYICPQhrHZKgAABAgS2FRDo23objQABAgQIDBEQ6ENY7ZQAAQIECGwrINC39TYaAQIECBAYIiDQh7DaKQECBAgQ2FZAoG/rbTQCBAgQIDBEQKAPYbVTAgQIECCwrYBA39bbaAQIECBAYIiAQB/CaqcECBAgQGBbAYG+rbfRCBAgQIDAEAGBPoTVTgkQIECAwLYCAn1bb6MRIECAAIEhAgJ9CKudEiBAgACBbQUE+rbeRiNAgAABAkMEBPoQVjslQIAAAQLbCgj0bb2NRoAAAQIEhggI9CGsdkqAAAECBLYVEOjbehuNAAECBAgMERDoQ1jtlAABAgQIbCsg0Lf1NhoBAgQIEBgiINCHsNopAQIECBDYVkCgb+ttNAIECBAgMERAoA9htVMCBAgQILCtgEDf1ttoBAgQIEBgiIBAH8JqpwQIECBAYFsBgb6tt9EIECBAgMAQAYE+hNVOCRAgQIDAtgICfVtvoxEgQIAAgSECAn0Iq50SIECAAIFtBQT6tt5GI0CAAAECQwQE+hBWOyVAgAABAtsKCPRtvY1GgAABAgSGCAj0Iax2SoAAAQIEthVYE+iPJfn8yGH9NslbSe5P8k6SFxfbPZfk4+m5Z5N8NP38eJIvum3bGE9O++p3cX36Zf7vtjpGI0CAAAECZyKwJtAPldIC+P0kzyT5KsmDU3C3cO+Den7tI0neTfLK9MT8c3ttezPwZpIPpn0J9DNpHodJgAABAvsRuJNAn8P7w2713Qd2C+nlo70BeD7Jq0keWIR/W7m3x7ySF+j76Q9HQoAAAQJnInAngf56koencP5uqrMFdnu+hfO3JwT6l0neTvLakdc55X4mjeQwCRAgQOBqBU4N9LYS/yTJS4tT6/318bmi/vr58pR7C+qXkzx9m9V5+5NAv9r+MDoBAgQInInAqYHegvuJxeq8ldpW522VPq/QD52WX94U16/OW7AfumHu+s2bN984E0uHSYAAAQIErkzglECf72T/7Mj17mURLcDbdfNjp+Hbm4BPk3zT3TD30OLUvRX6lbWGgQkQIEDgnAROCfSLbnxb1n276+ptXy8kaavvRxc3zL03nWpvN9cJ9HPqJsdKgAABAlcmcEqgHwvoYyv3Y6fn51P0bXXePuK2vANeoF9ZOxiYAAECBM5V4JRAv11AL0+vH7t5rjn1q/N2l3y/8nfK/Vw7yXETIECAwJUKnBLo7Zp3e7Qvjzn0WN7pvvw2uPaaeTXfPsPefwHNsW+Rc8r9StvD4AQIECBwLgKnBPpV1CTQr0LdmAQIECBwdgIC/eymzAETIECAAIH/FxDouoIAAQIECBQQEOgFJlEJBAgQIEBAoOsBAgQIECBQQECgF5hEJRAgQIAAAYGuBwgQIECAQAEBgV5gEpVAgAABAgQEuh4gQIAAAQIFBAR6gUlUAgECBAgQEOh6gAABAgQIFBAQ6AUmUQkECBAgQECg6wECBAgQIFBAQKAXmEQlECBAgAABga4HCBAgQIBAAQGBXmASlUCAAAECBAS6HiBAgAABAgUEBHqBSVQCAQIECBAQ6HqAAAECBAgUEBDoBSZRCQQIECBAQKDrAQIECBAgUEBAoBeYRCUQIECAAAGBrgcIECBAgEABAYFeYBKVQIAAAQIEBLoeIECAAAECBQQEeoFJVAIBAgQIEBDoeoAAAQIECBQQEOgFJlEJBAgQIEBAoOsBAgQIECBQQECgF5hEJRAgQIAAAYGuBwgQIECAQAEBgV5gEpVAgAABAgQEuh4gQIAAAQIFBAR6gUlUAgECBAgQEOh6gAABAgQIFBAQ6AUmUQkECBAgQECg6wECBAgQIFBAQKAXmEQlECBAgAABga4HCBAgQIBAAQGBXmASlUCAAAECBAS6HiBAgAABAgUEBHqBSVQCAQIECBAQ6HqAAAECBAgUEBDoBSZRCQQIECBAQKDrAQIECBAgUEBAoBeYRCUQIECAAAGBrgcIECBAgEABAYFeYBKVQIAAAQIEBLoeIECAAAECBQQEeoFJVAIBAgQIEBDoeoAAAQIECBQQWBvojyT5JMlPu5r/keSZJF9Nzz2W5PPu748n+aL7/dkkH02/L//WXvtkkrcWpten3+f/FiBXAgECBAgQuHyBtYHeAvf1JC2Uvz1wGHPgvzSFeNv+/S7w29/fTfLK9Nr55/Zm4P4kbyb5oHtzMA8h0C9/zu2RAAECBAoKrA30FuRPJHk1yXcHHFrYt0e/wu6fawH//PT6B5J8PG3bVvBt3+3Rnls+BHrBplMSAQIECFy+wNpAPxTY89G0FfY7ST5bhHIf4o8eCfQvk7yd5LUjK3+Bfvlzbo8ECBAgUFBgTaDPgf1iV39//fzBxYp73qw/Tf/Q4pR7C+qXkzx9m9V5+5NAL9h0SiJAgACByxdYE+hzYLfT4/Mp9f4a+TcrAr1dd1/eFNevzluwH7ph7vqNGzd+8dRTT/1tWfp99913a/nc999/f7Seu9n+dvttx7Dc96jtL9rv8lhO2f6Ubds4p2y/Ztv+2Nv2s+ma1/b+p2x/yran1nzq9hcdy9302GXu+5T/j07Z9vL/abNHAveewJpAP6Qyr9q/TvL7lYG+3E87jf9pkvaGYL5Jrq3k+5vv3rhx48YvDwX6vTdVKiZAgAABAscF7jTQ2x7n6+o3VlxDX95I1+56fyHJG0mW19ffm061tzvgnXLXvQQIECBAYIXAmkDvP3I2f+Z8eSPcRXe5H1udt9P4yzvgBfqKibMJAQIECBDoBdYEen96fb6G3q6Ht4+hzZ9Lv+hz6P2Y/eq8rdz7NwzLU+5W6PqVAAECBAisEFgT6G03yzvd/3rgS2Yu+qa4fj8frvwWuXZKvj3aF894ECBAgAABAkcE1gb6VQFaoV+VvHEJECBA4KwEBPpZTZeDJUCAAAEChwUEus4gQIAAAQIFBPYe6K6hF2gyJRAgQIDAeIG9B7pr6ON7wAgECBAgUEBAoBeYRCUQIECAAAGBrgcIECBAgEABgb0HumvoBZpMCQQIECAwXmDvge4a+vgeMAIBAgQIFBAQ6AUmUQkECBAgQECg6wECBAgQIFBAYO+B7hp6gSZTAgECBAiMF9h7oLuGPr4HjECAAAECBQQEeoFJVAIBAgQIEBDoeoAAAQIECBQQ2Hugu4ZeoMmUQIAAAQLjBfYe6K6hj+8BIxAgQIBAAQGBXmASlUCAAAECBAS6HiBAgAABAgUE9h7orqEXaDIlECBAgMB4gb0Humvo43vACAQIECBQQECgF5hEJRAgQIAAAYGuBwgQIECAQAGBvQe6a+gFmkwJBAgQIDBeYO+B7hr6+B4wAgECBAgUEBDoBSZRCQQIECBAQKDrAQIECBAgUEBg74HuGnqBJlMCAQIECIwX2Hugu4Y+vgeMQIAAAQIFBAR6gUlUAgECBAgQEOh6gAABAgQIFBDYe6C7hl6gyZRAgAABAuMF9h7orqGP7wEjECBAgEABAYFeYBKVQIAAAQIEBLoeIECAAAECBQT2HuiuoRdoMiUQIECAwHiBvQe6a+jje8AIBAgQIFBAQKAXmEQlECBAgAABga4HCBAgQIBAAYG9B7pr6AWaTAkECBAgMF5g74HuGvr4HjACAQIECBQQEOgFJlEJBAgQIEBAoOsBAgQIECBQQGDvge4aeoEmUwIBAgQIjBfYe6C7hj6+B4xAgAABAgUEBHqBSVQCAQIECBAQ6HqAAAECBAgUENh7oLuGXqDJlECAAAEC4wX2HuiuoY/vASMQIECAQAEBgV5gEpVAgAABAgQEuh4gQIAAAQIFBPYe6K6hF2gyJRAgQIDAeIG1gf5gko+T/Go6pL8meTbJt9Pv9yd5J8mLi0N+bnpde7pt/9H098eTfNFt+1iSJ5O8tXi9a+jje8AIBAgQIFBAYE2gz2H+4SKcn+9Cfd6mBXIf1DPRI0neTfLK9MT881dJ2puBN5N8kKT93j8EeoEmUwIBAgQIjBdYE+ht9fz6YkW+DPA+sJeh3Kpo+2hvAF5N8sD0xmAO/7Zyb492BmD5EOjje8AIBAgQIFBAYE2gHypzGeiHQr9/3bFA/zLJ20le607f969zDb1AkymBAAECBMYL3Gmgt4B+P8kz02ny/vr4fNT99fPlKfe28n45ydO3WZ23P1mhj+8BIxAgQIBAAYE7CfQWzp8k+V13mrydkm8hP98od+y6e39TXL86b8F+6Ia56zdv3pxX6QW4lUCAAAECBMYInBroc5j/6cAd6csjbOHe3zi3/Ht7E/Bpkm+6G+YeWlyvt0IfM+/2SoAAAQLFBE4J9FPCvDHd7rp629cLSdrq+9HFDXPvTafa2811Ar1YwymHAAECBMYIrA30Q6fZ5yOaP4P+2eJO9bZCf2K6s/27xeHPq/P2EbflDXMCfcxc2ysBAgQIFBZYE+iHrodfdHp9fgPw0oHPpfer8xb0/Q1zTrkXbjalESBAgMA4gTWBfugO9vmIjn0TXPv78tvg2nPzar59SU3/BTTHvkXOx9bGzb09EyBAgEAhgTWBfpXluoZ+lfrGJkCAAIGzERDoZzNVDpQAAQIECBwXEOi6gwABAgQIFBAQ6AUmUQkECBAgQECg6wECBAgQIFBAQKAXmEQlECBAgAABga4HCBAgQIBAAYG9B7rPoRdoMiUQIECAwHiBvQe6z6GP7wEjECBAgEABAYFeYBKVQIAAAQIEBLoeIECAAAECBQQEeoFJVAIBAgQIEBDoeoAAAQIECBQQEOgFJlEJBAgQIEBAoOsBAgQIECBQQGDvge5z6AWaTAkECBAgMF5g74Huc+jje8AIBAgQIFBAQKAXmEQlECBAgAABga4HCBAgQIBAAQGBXmASlUCAAAECBAS6HiBAgAABAgUEBHqBSVQCAQIECBAQ6HqAAAECBAgUENh7oPsceoEmUwIBAgQIjBfYe6D7HPr4HjACAQIECBQQEOgFJlEJBAgQIEBAoOsBAgQIECBQQECgF5hEJRAgQIAAAYGuBwgQIECAQAEBgV5gEpVAgAABAgQEuh4gQIAAAQIFBPYe6D6HXqDJlECAAAEC4wX2Hug+hz6+B4xAgAABAgUEBHqBSVQCAQIECBAQ6HqAAAECBAgUEBDoBSZRCQQIECBAQKDrAQIECBAgUEBAoBeYRCUQIECAAAGBrgcIECBAgEABgb0Hus+hF2gyJRAgQIDAeIG9B7rPoY/vASMQIECAQAEBgV5gEpVAgAABAgQEuh4gQIAAAQIFBAR6gUlUAgECBAgQ2HuguylOjxIgQIAAgRUCew90N8WtmESbECBAgAABga4HCBAgQIBAAYG9B7pT7gWaTAkECBAgMF5AoI83NgIBAgQIEBgusPdAdw19eAsYgAABAgQqCAj0CrOoBgIECBC45wUE+j3fAgAIECBAoILA3gPdTXEVukwNBAgQIDBcYO+B7hr68BYwAAECBAhUEBDoFWZRDQQIECBwzwvsPdCdcr/nWxQAAQIECKwROIdA/2WSv60pxjYECJQTuHWgomP/bp2ybdvtcvuL/j3stz9l2zbW2u0v2m553CO3H73v2XPNOH3da7Y/Za72su+76cf/9dh/AYcmP35kc4nVAAAAAElFTkSuQmCC";
 
   //Style du bouton supérieur (change en fonction de l'action)
   displayLoading = "none";
@@ -23,12 +23,18 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
   heightAltitude = 540;
 
   loadFilesStyle = "block";
-  showFilesStyle = "none"
+  showFilesStyle = "none";
+  cartoDisplay = "none";
 
   batteryUrl = "";
   heightUrl = "";
 
   idVol:string[][] = [];
+  warnings:string[][] = [];
+  isAddress = false;
+
+  displayModal = "none";
+  isModalOn = false;
 
   public contextBattery: CanvasRenderingContext2D | undefined;
   @ViewChild('canvasBattery', {static: false}) canvasBattery: ElementRef | undefined;
@@ -51,6 +57,51 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
 
   @ViewChild('myInput') myInput: ElementRef<HTMLElement> | undefined;
 
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: any) {
+    var isIncluded = false;
+    var isButton = false;
+    for(let i=0;i<event["path"].length; i++) {
+      if(event["path"][i].className == "modal-content") {
+        isIncluded = true;
+      }
+      else if(event["path"][i].className == "linkButton") {
+          isButton = true;
+          break;
+      }
+    }
+    if(!isIncluded && !isButton && this.isModalOn) {
+      this.toggleModal("");
+    }
+  }
+
+  toggleModal(idVol: string) {
+    if(idVol.length != 0) {
+      var url = "http://localhost:8888/api/getwarnings?id=" + idVol;
+      console.log(url)
+      this.http.get(url)
+        .subscribe(result => {
+          var x = JSON.parse(JSON.stringify(result));
+          console.log(x)
+          for(let i=0;i<x.length; i++) {
+            x[i]["time"] = this.changeHourFormat(x[i]["time"]);
+          }
+          this.warnings = x;
+          this.displayModal = "block";
+          this.isModalOn = true;
+      },
+      error => {
+        this.displayLoading = "none";
+      });
+    }
+    else {
+      this.displayModal = "none";
+      this.isModalOn = false;
+    }
+  }
+
+  
 
   // Ouvre la sélection de fichier
   chooseFile() {
@@ -76,7 +127,8 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
   // Tranforme le fichier .csv en format JSON
   csvToArray(csv: any){
     var finalArray = [];
-    var data, dataToPush;
+    var finalWarnings = [];
+    var data, dataToPush, warningsToPush;
     var line = csv.split("\n")
     var headers = line[1].split(",");
     if(headers[0] != "CUSTOM.updateTime [local]") {
@@ -91,7 +143,8 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
       for(let i=2; i<line.length; i++) {
         data = (line[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/))
         if(data[175]!= undefined && data[175].length > 1) {
-          // console.log(data[175])
+          warningsToPush = [data[0], data[175]]
+          finalWarnings.push(warningsToPush);
         }
         if(i%10 == 2 || i == (line.length - 2)) {
           if(!data.includes(undefined)) {
@@ -100,75 +153,116 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
           }
         }
       }
-      // this.insertFlightToDatabase(finalArray);
-      this.displayLoading = "none";
-      this.buttonText = "Importer des données"
+      // this.insertWarningsToDatabase(finalWarnings);
+      this.insertFlightToDatabase(finalArray, finalWarnings);
     }
-    
   }
 
-  insertFlightToDatabase(data:any) {
-    console.log(data);
+  insertFlightToDatabase(data:any, datawarnings:any) {
     var idInter = parseInt((window.location.href).split("?")[1].substring(3));
     var startTime = data[1][0];
     var flightTime = 0;
     for(let h=1;h<data.length; h++) {
-      if(data[data.length-h][1] != undefined) {
-        flightTime = Math.floor(data[data.length-h][1]);
+      if(data[data.length-h][1] != undefined && data[data.length-h][1] != null) {
+        var y = data[data.length-h][1];
+        y = y.replaceAll('"', '');
+        y = y.replaceAll(',', '');
+
+        flightTime = Math.floor(y);
         break;
       }
     }
+    var maxHeight:number = 0;
+
+    // Récupère la hauteur maximale du drone
+    for(var i=1;i<data.length;i++) {
+      if(parseFloat(data[i][4]) > maxHeight) {
+        maxHeight = data[i][4];
+      }
+    }
+
     var startLatitude = data[1][2];
     var startLongitude = data[1][3];
     var batteryGraph = this.drawBattery(data, (this.widthBattery-40), (this.heightBattery-40));
     var heightGraph = this.drawAltitude(data, (this.widthAltitude-40), (this.heightAltitude-40));
 
-    this.addFlightToDatabase(idInter, startTime, flightTime, startLatitude, startLongitude, batteryGraph, heightGraph, data);
+    this.addFlightToDatabase(idInter, startTime, flightTime, startLatitude, startLongitude, batteryGraph, heightGraph, maxHeight, data, datawarnings);
   }
 
-  addFlightToDatabase(idInter:number, startTime:string, flightTime:number, startLatitude:string, startLongitude:string, batteryGraph:any, heightGraph:any, data:any) {
-    this.http.post<any>('http://localhost:8888/api/newflight', {idInter, startTime, flightTime, startLatitude, startLongitude, batteryGraph, heightGraph}).subscribe(res => {
-      this.addFlightDataToDatabase(data);
+  addFlightToDatabase(idInter:number, startTime:string, flightTime:number, startLatitude:string, startLongitude:string, batteryGraph:any, heightGraph:any, maxHeight:any, data:any, datawarnings: any) {
+    this.http.post<any>('http://localhost:8888/api/newflight', {idInter, startTime, flightTime, startLatitude, startLongitude, batteryGraph, heightGraph, maxHeight}).subscribe(res => {
+      this.addFlightDataToDatabase(data, datawarnings);
     },
     error => {
       this.displayLoading = "none";
     })
+    if(this.isAddress == false) {
+      var url = "https://reverse.geocoder.ls.hereapi.com/6.2/reversegeocode.json?apiKey=oiddpbeVlrbmsordL-3o1kwXtDNxa2YXnhBb7q4_NJ4&mode=retrieveAddresses&prox=" + startLatitude + "," + startLongitude;
+      console.log(url)
+      this.http.get(url)
+        .subscribe(result => {  
+          var res = JSON.parse(JSON.stringify(result));
+          if(res.length != 0) {
+            var dataAddress = res["Response"]["View"][0]["Result"][0]["Location"]["Address"];
+            var commune = dataAddress["City"];
+            var street = dataAddress["Street"];
+            this.http.post<any>('http://localhost:8888/api/newaddress', {idInter, commune, street})
+            .subscribe(res => {
+              
+            },
+            error => {
+              // this.displayLoading = "none";
+            })
+          }
+          
+        });
+    }  
+    this.displayLoading = "none";
+    this.buttonText = "Importer des données"  
   }
 
-  addFlightDataToDatabase(data:any) {
+  addFlightDataToDatabase(data:any, datawarnings:any) {
     this.http.get("http://localhost:8888/api/lastflight")
     .subscribe(result => {
       var idVol = JSON.parse(JSON.stringify(result))[0]["idVol"]
-      var hour;
-      var time;
-      var latitude;
-      var longitude;
-      var height;
-      var battery
-      var aircraftYaw;
-      var gimbalYaw;
+      var hour, time, latitude, longitude, height, battery, aircraftYaw, gimbalYaw;
       for(let i=1;i<data.length; i++) {
-        hour = data[i][0]
-        time = data[i][1].replaceAll(",", "");
-        latitude = data[i][2];
-        longitude = data[i][3];
-        height = data[i][4];
-        if(data[i][7].length == 0) {
-          battery = null;
-        } else {
-          battery = data[i][7];
+        if(data[i][0] != undefined && data[i][1] != undefined && data[i][2] != undefined && data[i][3] != undefined && data[i][4] != undefined && data[i][5] != undefined && data[i][6] != undefined && data[i][7] != undefined) {
+          hour = data[i][0]
+          time = data[i][1].replaceAll(",", "");
+          latitude = data[i][2];
+          longitude = data[i][3];
+          height = data[i][4];
+          if(data[i][7].length == 0) {
+            battery = null;
+          } else {
+            battery = data[i][7];
+          }
+          
+          aircraftYaw = data[i][5];
+          gimbalYaw = data[i][6];
         }
         
-        aircraftYaw = data[i][5];
-        gimbalYaw = data[i][6];
 
         this.http.post<any>('http://localhost:8888/api/newdataflight', {idVol, hour, time, latitude, longitude, height, battery, aircraftYaw, gimbalYaw}).subscribe(data => {
-     
+  
         },
         error => {
           this.displayLoading = "none";
         })
-      }  
+      }
+      var heure, warn;
+      for(let j=0;j<datawarnings.length; j++) { 
+        heure = datawarnings[j][0];
+        warn = datawarnings[j][1];
+        console.log('new warn')
+        this.http.post<any>('http://localhost:8888/api/newwarnings', {idVol, heure, warn}).subscribe(data => {
+      
+        },
+        error => {
+          this.displayLoading = "none";
+        })
+      }
     },
     error => {
       this.displayLoading = "none";
@@ -455,12 +549,106 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
     }
   }
 
+
+  // Change le format du temps de vol (secondes -> minutes/secondes)
+  // changeFlightTimeFormat(61) -> 1m01s
+  changeHourFormat(hour:string) {
+    var piece = hour.split(":")
+    if(hour[hour.length-2] == 'P'){
+      if(parseInt(piece[0]) == 12) {
+        var heures = piece[0];
+      } else {
+        var heures = (parseInt(piece[0]) + 12).toString();
+      }
+    } else {
+      if(parseInt(piece[0]) == 12) {
+        var heures = "00";
+      }
+      if(parseInt(piece[0]) < 10) {
+          var heures = "0" + piece[0];
+      }
+      var heures = piece[0];
+    }
+    var minutes = piece[1];
+    var secondes = piece[2].substring(0,2);
+    var timeShowed = heures + "h" + minutes + "m" + secondes + "s";
+    return timeShowed;
+  }
+
+    // Change le format du temps de vol (secondes -> minutes/secondes)
+  // changeFlightTimeFormat(61) -> 1m01s
+  changeFlightTimeFormat(flightTime: string) {
+    console.log(flightTime)
+    var final = "";
+    if(flightTime != null) {
+      flightTime = flightTime.toString()
+      if(flightTime.includes(",")) {
+        flightTime = flightTime.replace(/,/g, "");
+      }
+      if(flightTime.includes('"')) {
+        flightTime = flightTime.replace(/"/g, "");
+      }
+      if(flightTime.includes(".")) {
+          var ftInt = parseInt(flightTime.split(".")[0]);
+      } else {
+          var ftInt = parseInt(flightTime);
+      }
+      var minutes = Math.floor(ftInt/60)
+      var secondes = ftInt - (minutes*60);
+      if(secondes < 10 && minutes < 10) {
+          var final = "0" + minutes + "m0" + secondes + "s";
+      } else if (secondes < 10 && minutes > 10) {
+          var final = minutes + "m0" + secondes + "s";
+      } else if (secondes > 10 && minutes < 10){
+          var final = "0" + minutes + "m" + secondes + "s";
+      } else {
+          var final = minutes + "m" + secondes + "s";
+      }
+    }
+    
+    return final;
+  }
+
+  changeHeightFormat(height:any) {
+    var heightInMeters = Math.round(height * 0.3048);
+    return heightInMeters;
+  }
+
+  getDroits() {
+    var mail = this.getCookie("email");
+    var url = "http://localhost:8888/api/droits?mail=" + mail; 
+    this.http.get(url)
+      .subscribe(result => {
+        var x = JSON.parse(JSON.stringify(result))[0];
+        if(!x.isSuperAdmin && !x.isAdmin) {
+          window.location.href = "/";
+        }
+      },
+      error => {
+       console.log(error);
+      });
+  }
+
+  getCookie(name: string) {
+    let ca: Array<string> = document.cookie.split(';');
+    let caLen: number = ca.length;
+    let cookieName = `${name}=`;
+    let c: string;
+
+    for (let i: number = 0; i < caLen; i += 1) {
+        c = ca[i].replace(/^\s+/g, '');
+        if (c.indexOf(cookieName) == 0) {
+            return c.substring(cookieName.length, c.length);
+        }
+    }
+    return '';
+  }
+
   ngOnInit(): void {
+    this.getDroits();
     var id:number = NaN;
     if((window.location.href).split("?")[1] != undefined) {
       var id = parseInt((window.location.href).split("?")[1].substring(3));
-      
-      // this.resetAll(id);
     }
     
     if(isNaN(id)) {
@@ -470,15 +658,33 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
     this.http.get(url)
       .subscribe(result => {
         var x = JSON.parse(JSON.stringify(result));
-        console.log(x)
         if(x.length == 0) {
           this.showFilesStyle = "none";
+          this.cartoDisplay = "none";
         } else {
           this.idVol = [];
           for(let i=0;i<x.length;i++) {
-            this.idVol.push(x[i]["idVol"]);
+            x[i]["startTime"] = this.changeHourFormat(x[i]["startTime"]);
+            console.log(x[i]["flightTime"]);
+            x[i]["flightTime"] = this.changeFlightTimeFormat(x[i]["flightTime"]);
+            x[i]["maxHeight"] = Math.floor(parseInt(x[i]["maxHeight"]) * 0.3048);
+            this.idVol.push(x[i]);
           }
+          this.cartoDisplay = "block";
           this.showFilesStyle = "block";
+        }
+    },
+    error => {
+      this.displayLoading = "none";
+    });
+    var url = "http://localhost:8888/api/intervention?id=" + id;
+    this.http.get(url)
+      .subscribe(result => {
+        var x = JSON.parse(JSON.stringify(result));
+        if(x["commune"] == null && x["street"] == null) {
+          this.isAddress = false;
+        } else {
+          this.isAddress = true;
         }
     },
     error => {
