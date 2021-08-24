@@ -5,23 +5,19 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/5.10.2/video.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/3.0.2/videojs-contrib-hls.js"></script>
 
-<!-- <div id="newFluxDiv">
-    <p id="newFlux">Une retransmission en direct est en cours.</p>
-    <div id="buttonLive" (click)="changeSrc('getdirectlive/index.m3u8')"><p>Voir le live</p></div>
-</div> -->
+<link href="https://vjs.zencdn.net/7.11.4/video-js.css" rel="stylesheet">
+
+<div id="newFluxDiv" *ngIf="isCurrentLive">
+Une retransmission en direct est en cours.<div id="buttonLive" (click)="setToLive()"><p>Voir le live</p></div>
+    
+</div>
 
 
 <div id="contenu">
-  <video id="my-video" class="vjs-styling video-js" controls preload="auto" poster="" data-setup='{"fluid":true}' width="500px" height="250px">
-    <source [src]="sourceLive"
-     type='application/x-mpegURL'>
-    <p class="vjs-no-js">
-      To view this video please enable JavaScript, and consider upgrading to a web browser that
-      <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-    </p>
-  </video>
-  <!-- <video #target class="vjs-styling video-js"  width="250px" height="500px"></video> -->
+  <video #target class="vjs-styling video-js"  width="250px" height="500px"></video>
 </div>
+
+<div class="changeQualityButton" (click)="changeQuality()" [style.background-color]="bgColor"><p>{{imageQuality}}</p></div>
 
 <script src="../videojs/videojs-resolution-switcher.js"></script>
 <!-- Génération d'un lien sécurisé (Component externe) -->

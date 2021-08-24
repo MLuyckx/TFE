@@ -173,24 +173,26 @@ export class CartographyComponent implements OnInit {
   drawAircraftGps() {
     var featureLine;
     var points;
-    for(let i=1; i<this.dataJson.length; i++) { 
-      points = [[parseFloat(this.dataJson[i-1]["longitude"]), parseFloat(this.dataJson[i-1]["latitude"])], [parseFloat(this.dataJson[i]["longitude"]), parseFloat(this.dataJson[i]["latitude"])]]
-      for(let j=0; j<points.length; j++) {
-        points[j] = transform(points[j], 'EPSG:4326', 'EPSG:3857');
+      for(let i=1; i<this.dataJson.length; i++) { 
+        points = [[parseFloat(this.dataJson[i-1]["longitude"]), parseFloat(this.dataJson[i-1]["latitude"])], [parseFloat(this.dataJson[i]["longitude"]), parseFloat(this.dataJson[i]["latitude"])]]
+        for(let j=0; j<points.length; j++) {
+          points[j] = transform(points[j], 'EPSG:4326', 'EPSG:3857');
+        }
+        featureLine = new Feature({
+          geometry: new LineString(points),
+          properties: [
+            {"date": this.dataJson[i]["hour"]},
+            {"flightTime": this.dataJson[i]["time"]},
+            {"battery": this.dataJson[i]["battery"]},
+            {"height": this.dataJson[i]["height"]},
+            {"aircraftYaw": this.dataJson[i]["aircraftYaw"]},
+            {"gimbalYaw": this.dataJson[i]["gimbalYaw"]},
+          ]
+        });
+        this.vectorLine.addFeature(featureLine);    
       }
-      featureLine = new Feature({
-        geometry: new LineString(points),
-        properties: [
-          {"date": this.dataJson[i]["hour"]},
-          {"flightTime": this.dataJson[i]["time"]},
-          {"battery": this.dataJson[i]["battery"]},
-          {"height": this.dataJson[i]["height"]},
-          {"aircraftYaw": this.dataJson[i]["aircraftYaw"]},
-          {"gimbalYaw": this.dataJson[i]["gimbalYaw"]},
-        ]
-      });
-      this.vectorLine.addFeature(featureLine);    
-    }
+    
+      console.log(this.vectorLine)
     this.vectorLineLayer = new Vector({
       source: this.vectorLine,
       style: new Style({
@@ -206,14 +208,15 @@ export class CartographyComponent implements OnInit {
   }
 
   ngOnChanges() {
-    console.log(this.idVol)
     for(let i=0;i<this.idVol.length; i++) {
       var url = "http://localhost:8888/api/livedata?id=" + this.idVol[i]["idVol"];
+      console.log(url)
       // var url = "http://localhost:8888/api/livedata?id=9";
       this.http.get(url)
       .subscribe(result => {
           var res = JSON.parse(JSON.stringify(result))
           if(res.length != 0) {
+              console.log(res);
               this.dataJson = res;
               this.drawAircraftGps();
           }

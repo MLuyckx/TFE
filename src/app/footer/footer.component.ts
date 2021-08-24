@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-footer',
@@ -108,7 +108,7 @@ updateDroits() {
   }
 }
 
-changeUser(name:string, isSuperAdmin: string, isAdmin:string, isDispatch: string) {
+changeUser(name:string, isSuperAdmin: string, isAdmin:string, isDispatch: string, target:any) {
   this.email = name;
   
   if(isSuperAdmin == "X") {
@@ -128,6 +128,7 @@ changeUser(name:string, isSuperAdmin: string, isAdmin:string, isDispatch: string
   } else {
     this.newdispatch = false;
   }
+  target.scrollTo({top: 50, behavior: 'smooth'});
 }
 
 toggleModal() {

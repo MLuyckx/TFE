@@ -13,22 +13,71 @@ var videoLink: string = "http://192.168.13.110:8080/live/index.m3u8";
   encapsulation: ViewEncapsulation.None
 })
 export class LivestreamComponent implements OnInit {
-  displaySecureLink = false;
 
-  sourceLive = "http://192.168.13.110:8080/getdirectlive/index.m3u8";
+  @ViewChild('target', {static: true}) target: ElementRef | undefined;
+  // see options: https://github.com/videojs/video.js/blob/maintutorial-options.html
+  player: videojs.Player | undefined;
+
+  isCurrentLive = false;
+  displaySecureLink = false;
+  sourceData:string= "http://192.168.13.110:8080/getdirectlive/index.m3u8";
+  videoSource:Object = { autoplay: true, controls: true, sources: [{ src: this.sourceData, type: 'application/x-mpegURL' }]};
+  styleVideo = "width: 500px; height: 250px;"
+  imageQuality = "Haute qualité";
+  bgColor = "lightgreen";
+  isReading = false;
 
   constructor(private http: HttpClient) {}
+
+  setToLive() {
+    if(this.target != undefined && this.player != undefined) {
+      this.player.pause();
+      this.player.src("http://192.168.13.110:8080/getdirectlive/index.m3u8");
+    }
+  }
+
+  changeQuality() {
+    if(this.imageQuality == "Haute qualité") {
+      this.imageQuality = "Basse qualité";
+      this.bgColor = "orange";
+      if(this.target != undefined && this.player != undefined) {
+        this.player.pause();
+        this.player.src("http://192.168.13.110:8080/getdirectmobile/index.m3u8");
+      }
+    } else {
+      this.imageQuality = "Haute qualité";
+      this.bgColor = "lightgreen"
+      if(this.target != undefined && this.player != undefined) {
+        this.player.pause();
+        this.player.src("http://192.168.13.110:8080/getdirectlive/index.m3u8");
+      }
+    }
+  }
 
   updateFlux() {
     this.http.get("http://192.168.13.110:8080/getdirectlive")
       .subscribe(result => {  
-        console.log(result)
+        var x = JSON.parse(JSON.stringify(result));
+        if(x.length == 0) {
+          this.isCurrentLive = false;
+        } else {
+          var isIncluded = false;
+          for(let i=0; i<x.length;i++) {
+            if(x[i]["name"] == "index.m3u8") {
+                isIncluded = true;
+            }   
+          }
+          if(isIncluded) {
+            this.isCurrentLive = true;
+            this.isReading = true;
+          }
+        }
       },
       error => {});
     
     setTimeout(()=>{ 
       this.updateFlux();
-    }, 30000)
+    }, 10000)
   }
 
   getDroits() {
@@ -70,6 +119,11 @@ export class LivestreamComponent implements OnInit {
 
   ngOnInit() {
     this.getDroits();
+    this.updateFlux();
+    if(this.target != undefined) {
+      this.player = videojs(this.target.nativeElement, this.videoSource, function onPlayerReady() {});
+    }
+    
   }
 
 }

@@ -79,11 +79,9 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
   toggleModal(idVol: string) {
     if(idVol.length != 0) {
       var url = "http://localhost:8888/api/getwarnings?id=" + idVol;
-      console.log(url)
       this.http.get(url)
         .subscribe(result => {
           var x = JSON.parse(JSON.stringify(result));
-          console.log(x)
           for(let i=0;i<x.length; i++) {
             x[i]["time"] = this.changeHourFormat(x[i]["time"]);
           }
@@ -143,7 +141,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
       for(let i=2; i<line.length; i++) {
         data = (line[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/))
         if(data[175]!= undefined && data[175].length > 1) {
-          warningsToPush = [data[0], data[175]]
+          warningsToPush = [data[0], data[175]];
           finalWarnings.push(warningsToPush);
         }
         if(i%10 == 2 || i == (line.length - 2)) {
@@ -153,7 +151,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
           }
         }
       }
-      // this.insertWarningsToDatabase(finalWarnings);
+      console.log("csvToArray done")
       this.insertFlightToDatabase(finalArray, finalWarnings);
     }
   }
@@ -185,12 +183,13 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
     var startLongitude = data[1][3];
     var batteryGraph = this.drawBattery(data, (this.widthBattery-40), (this.heightBattery-40));
     var heightGraph = this.drawAltitude(data, (this.widthAltitude-40), (this.heightAltitude-40));
-
+    console.log("insertFlightToDatabase done")
     this.addFlightToDatabase(idInter, startTime, flightTime, startLatitude, startLongitude, batteryGraph, heightGraph, maxHeight, data, datawarnings);
   }
 
   addFlightToDatabase(idInter:number, startTime:string, flightTime:number, startLatitude:string, startLongitude:string, batteryGraph:any, heightGraph:any, maxHeight:any, data:any, datawarnings: any) {
     this.http.post<any>('http://localhost:8888/api/newflight', {idInter, startTime, flightTime, startLatitude, startLongitude, batteryGraph, heightGraph, maxHeight}).subscribe(res => {
+      console.log("addFlightToDatabase done")
       this.addFlightDataToDatabase(data, datawarnings);
     },
     error => {
@@ -198,7 +197,6 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
     })
     if(this.isAddress == false) {
       var url = "https://reverse.geocoder.ls.hereapi.com/6.2/reversegeocode.json?apiKey=oiddpbeVlrbmsordL-3o1kwXtDNxa2YXnhBb7q4_NJ4&mode=retrieveAddresses&prox=" + startLatitude + "," + startLongitude;
-      console.log(url)
       this.http.get(url)
         .subscribe(result => {  
           var res = JSON.parse(JSON.stringify(result));
@@ -217,14 +215,25 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
           
         });
     }  
-    this.displayLoading = "none";
-    this.buttonText = "Importer des données"  
   }
 
   addFlightDataToDatabase(data:any, datawarnings:any) {
     this.http.get("http://localhost:8888/api/lastflight")
     .subscribe(result => {
-      var idVol = JSON.parse(JSON.stringify(result))[0]["idVol"]
+      var idVol = JSON.parse(JSON.stringify(result))[0]["idVol"];
+
+      var heure, warn;
+      for(let j=0;j<datawarnings.length; j++) { 
+        heure = datawarnings[j][0];
+        warn = datawarnings[j][1];
+        this.http.post<any>('http://localhost:8888/api/newwarnings', {idVol, heure, warn}).subscribe(data => {
+      
+        },
+        error => {
+          this.displayLoading = "none";
+        })
+      }
+
       var hour, time, latitude, longitude, height, battery, aircraftYaw, gimbalYaw;
       for(let i=1;i<data.length; i++) {
         if(data[i][0] != undefined && data[i][1] != undefined && data[i][2] != undefined && data[i][3] != undefined && data[i][4] != undefined && data[i][5] != undefined && data[i][6] != undefined && data[i][7] != undefined) {
@@ -244,25 +253,19 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
         }
         
 
-        this.http.post<any>('http://localhost:8888/api/newdataflight', {idVol, hour, time, latitude, longitude, height, battery, aircraftYaw, gimbalYaw}).subscribe(data => {
-  
+        this.http.post<any>('http://localhost:8888/api/newdataflight', {idVol, hour, time, latitude, longitude, height, battery, aircraftYaw, gimbalYaw}).subscribe(data2 => {
+          if(i == data.length-1) {
+            this.displayLoading = "none";
+            this.buttonText = "Importer des données"; 
+            window.location.href = window.location.href;
+          }
         },
         error => {
           this.displayLoading = "none";
         })
       }
-      var heure, warn;
-      for(let j=0;j<datawarnings.length; j++) { 
-        heure = datawarnings[j][0];
-        warn = datawarnings[j][1];
-        console.log('new warn')
-        this.http.post<any>('http://localhost:8888/api/newwarnings', {idVol, heure, warn}).subscribe(data => {
       
-        },
-        error => {
-          this.displayLoading = "none";
-        })
-      }
+      
     },
     error => {
       this.displayLoading = "none";
@@ -578,7 +581,6 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
     // Change le format du temps de vol (secondes -> minutes/secondes)
   // changeFlightTimeFormat(61) -> 1m01s
   changeFlightTimeFormat(flightTime: string) {
-    console.log(flightTime)
     var final = "";
     if(flightTime != null) {
       flightTime = flightTime.toString()
@@ -665,7 +667,6 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
           this.idVol = [];
           for(let i=0;i<x.length;i++) {
             x[i]["startTime"] = this.changeHourFormat(x[i]["startTime"]);
-            console.log(x[i]["flightTime"]);
             x[i]["flightTime"] = this.changeFlightTimeFormat(x[i]["flightTime"]);
             x[i]["maxHeight"] = Math.floor(parseInt(x[i]["maxHeight"]) * 0.3048);
             this.idVol.push(x[i]);

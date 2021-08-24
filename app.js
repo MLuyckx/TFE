@@ -253,7 +253,8 @@ app.post('/api/newinter', (req,res) => {
 
 app.post('/api/intertovideo', (req,res) => {
     var fileName = req.body.fileName;
-    var idInter = req.body.idInter
+    var idInter = req.body.idInter;
+    console.log(fileName, idInter)
     let sql = "UPDATE Videos SET idInter = '" + idInter + "' WHERE fileName = '" + fileName + "';";
     con.query(sql, function (err, result) {
         if (err) throw err;
@@ -334,7 +335,7 @@ app.get('/api/lastinter', (req,res) => {
 });
 
 app.get('/api/unassignedVideos', (req,res) => {
-    let sql = "select * from Videos where idInter is NULL ORDER BY recordTime DESC;"
+    let sql = "select * from Videos where idInter is NULL ORDER BY recordTime ASC;"
     con.query(sql, function (err, result) {
         if (err) throw err;
         res.send(result);

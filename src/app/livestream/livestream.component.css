@@ -44,8 +44,7 @@ body {
     width: 20vw;
     height: auto;
     min-height: 8vh;
-    /* margin-top: 5vh; */
-    margin: 5vh auto 0 auto;
+    margin: 2vh auto 0 auto;
     background-color: rgb(190, 190, 190);
    
 }
@@ -65,6 +64,26 @@ body {
     margin-left: 12.5%;
     font-size: 1em;
     display: block;
+}
+
+.changeQualityButton {
+    text-align: center;
+    position: relative;
+    width: 20vw;
+    height: auto;
+    min-height: 8vh;
+    /* margin-top: 5vh; */
+    margin: 5vh auto 0 auto;
+    background-color: rgb(214, 214, 214);
+}
+
+.changeQualityButton:hover {
+    cursor: pointer;
+    background-color: rgb(190, 190, 190);
+}
+
+.changeQualityButton > p {
+    padding: 2vh 2vw;
 }
 
 @media only screen and (max-width: 550px) {
