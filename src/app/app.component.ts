@@ -27,7 +27,7 @@ export class AppComponent {
       var code = window.location.href.split('?')[1];
       if(!code || !code.startsWith("code=")) {
         
-        url = "http://localhost:8888/connexion";
+        url = "http://192.168.13.110:8888/connexion";
         this.http.get(url,  {responseType: 'text'})
         .subscribe(result => {
           var x = JSON.parse(JSON.stringify(result));
@@ -40,7 +40,7 @@ export class AppComponent {
           this.tryingToConnect = false;
         });
       } else {
-          url = "http://localhost:8888/connexion?" + code;
+          url = "http://192.168.13.110:8888/connexion?" + code;
           this.http.get(url, {responseType: 'text'})
           .subscribe(result => {
             var x = JSON.parse(JSON.stringify(result.substring(1, result.length-1)));

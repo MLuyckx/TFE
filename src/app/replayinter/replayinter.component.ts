@@ -89,7 +89,7 @@ export class ReplayinterComponent implements OnInit {
   }
 
   addVideoToDb(data:any) {
-    this.http.post<any>('http://localhost:8888/api/newvideo', {fileName: data[1], videoName: 'flag', recordTime: data[0]}).subscribe(data => {
+    this.http.post<any>('http://192.168.13.110:8888/api/newvideo', {fileName: data[1], videoName: 'flag', recordTime: data[0]}).subscribe(data => {
       //  console.log(data);
     })
   }
@@ -128,7 +128,7 @@ export class ReplayinterComponent implements OnInit {
       this.displayError = "block";
     }
     else {
-      this.http.post<any>('http://localhost:8888/api/editvideoname', {fileName: this.fileName, newname: this.newTitle}).subscribe(data => {
+      this.http.post<any>('http://192.168.13.110:8888/api/editvideoname', {fileName: this.fileName, newname: this.newTitle}).subscribe(data => {
         window.location.href = window.location.href; 
       })
     }
@@ -136,7 +136,7 @@ export class ReplayinterComponent implements OnInit {
 
   getDroits() {
     var mail = this.getCookie("email");
-    var url = "http://localhost:8888/api/droits?mail=" + mail; 
+    var url = "http://192.168.13.110:8888/api/droits?mail=" + mail; 
     this.http.get(url)
       .subscribe(result => {
         var x = JSON.parse(JSON.stringify(result))[0];
@@ -169,7 +169,7 @@ export class ReplayinterComponent implements OnInit {
     if(this.target != undefined) {
       this.player = videojs(this.target.nativeElement, this.videoSource, function onPlayerReady() {});
     }
-    this.http.get("http://localhost:8888/api/videoFileNameList")
+    this.http.get("http://192.168.13.110:8888/api/videoFileNameList")
       .subscribe(result => {
         this.checkIfNewVideos(result);
       },
@@ -179,7 +179,7 @@ export class ReplayinterComponent implements OnInit {
     var location = window.location.href;
     var id = parseInt(location.split('?')[1].substring(3));
     this.interId = id;
-    this.http.get("http://localhost:8888/api/videoByInter?id=" + id)
+    this.http.get("http://192.168.13.110:8888/api/videoByInter?id=" + id)
       .subscribe(result => {
         var videoResult = JSON.parse(JSON.stringify(result));
         for(let i=0;i<videoResult.length; i++) {

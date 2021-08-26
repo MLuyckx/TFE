@@ -53,15 +53,15 @@ updateDroits() {
     this.sendText = "Soumettre";
     alert("Email incorrect");
   } else {
-    var url = "http://localhost:8888/api/droits?mail=" + this.email; 
+    var url = "http://192.168.13.110:8888/api/droits?mail=" + this.email; 
     this.http.get(url)
       .subscribe(result => {
         var x = JSON.parse(JSON.stringify(result));
         console.log(x);
         if(x.length == 0) {
-          this.http.post<any>('http://localhost:8888/api/newuser', {name: this.email})
+          this.http.post<any>('http://192.168.13.110:8888/api/newuser', {name: this.email})
           .subscribe(data => {
-            this.http.post<any>('http://localhost:8888/api/updateuser', {name: this.email, superadmin: this.newsuperadmin, admin: this.newadmin, dispatch: this.newdispatch})
+            this.http.post<any>('http://192.168.13.110:8888/api/updateuser', {name: this.email, superadmin: this.newsuperadmin, admin: this.newadmin, dispatch: this.newdispatch})
             .subscribe(data => {
               this.sendText = "Envoi..."
               setTimeout(() => {
@@ -84,7 +84,7 @@ updateDroits() {
           })
         }
         else {
-          this.http.post<any>('http://localhost:8888/api/updateuser', {name: this.email, superadmin: this.newsuperadmin, admin: this.newadmin, dispatch: this.newdispatch})
+          this.http.post<any>('http://192.168.13.110:8888/api/updateuser', {name: this.email, superadmin: this.newsuperadmin, admin: this.newadmin, dispatch: this.newdispatch})
           .subscribe(data => {
             this.sendText = "Envoi..."
             setTimeout(() => {
@@ -157,7 +157,7 @@ setCookie(name: string, value: string, expireDays: number, path: string = '') {
 
 getDroits() {
   var mail = this.getCookie("email");
-  var url = "http://localhost:8888/api/droits?mail=" + mail; 
+  var url = "http://192.168.13.110:8888/api/droits?mail=" + mail; 
   this.http.get(url)
   .subscribe(result => {
     var x = JSON.parse(JSON.stringify(result))[0];
@@ -177,7 +177,7 @@ getDroits() {
 }
 
 loadDroitsPersons() {
-  var url = "http://localhost:8888/api/getallusers"; 
+  var url = "http://192.168.13.110:8888/api/getallusers"; 
   this.http.get(url)
   .subscribe(result => {
     var x = JSON.parse(JSON.stringify(result));

@@ -332,7 +332,7 @@ class CartographyComponent {
     }
     ngOnChanges() {
         for (let i = 0; i < this.idVol.length; i++) {
-            var url = "http://localhost:8888/api/livedata?id=" + this.idVol[i]["idVol"];
+            var url = "http://192.168.13.110:8888/api/livedata?id=" + this.idVol[i]["idVol"];
             console.log(url);
             // var url = "http://localhost:8888/api/livedata?id=9";
             this.http.get(url)
@@ -437,7 +437,7 @@ class ReplaysComponent {
             this.displayError = "block";
         }
         else {
-            this.http.post('http://localhost:8888/api/editinterventionname', { idInter: idInter, newname: this.newTitle }).subscribe(data => {
+            this.http.post('http://192.168.13.110:8888/api/editinterventionname', { idInter: idInter, newname: this.newTitle }).subscribe(data => {
                 this.generateInterList();
                 this.displayModal = "none";
             });
@@ -445,7 +445,7 @@ class ReplaysComponent {
     }
     generateInterList() {
         var x = [];
-        this.http.get("http://localhost:8888/api/interventions")
+        this.http.get("http://192.168.13.110:8888/api/interventions")
             .subscribe(result => {
             x = JSON.parse(JSON.stringify(result));
             for (let i = 0; i < x.length; i++) {
@@ -486,7 +486,7 @@ class ReplaysComponent {
     }
     getVideoNumber(data) {
         for (let j = 0; j < data.length; j++) {
-            this.http.get("http://localhost:8888/api/videoByInter?id=" + data[j]["idInter"])
+            this.http.get("http://192.168.13.110:8888/api/videoByInter?id=" + data[j]["idInter"])
                 .subscribe(result => {
                 var x = JSON.parse(JSON.stringify(result));
                 data[j]["imageSource"] = "../../assets/drone.png";
@@ -494,7 +494,7 @@ class ReplaysComponent {
             }, error => {
                 this.displayLoading = "none";
             });
-            this.http.get("http://localhost:8888/api/statsByInter?id=" + data[j]["idInter"])
+            this.http.get("http://192.168.13.110:8888/api/statsByInter?id=" + data[j]["idInter"])
                 .subscribe(result => {
                 var x = JSON.parse(JSON.stringify(result));
                 if (x.length == 0) {
@@ -549,11 +549,11 @@ class ReplaysComponent {
         }, 500);
     }
     checkIfUnassignedVideos() {
-        this.http.get("http://localhost:8888/api/unassignedVideos")
+        this.http.get("http://192.168.13.110:8888/api/unassignedVideos")
             .subscribe(res => {
             var videoResult = JSON.parse(JSON.stringify(res));
             if (videoResult.length != 0) {
-                this.http.get("http://localhost:8888/api/lastInter")
+                this.http.get("http://192.168.13.110:8888/api/lastInter")
                     .subscribe(res2 => {
                     var interResult = JSON.parse(JSON.stringify(res2));
                     var date, dateLastInter, idInter;
@@ -612,7 +612,7 @@ class ReplaysComponent {
         });
     }
     addVideoToDb(data) {
-        this.http.post('http://localhost:8888/api/newvideo', { fileName: data[1], videoName: data[1], recordTime: data[0] }).subscribe(data => {
+        this.http.post('http://192.168.13.110:8888/api/newvideo', { fileName: data[1], videoName: data[1], recordTime: data[0] }).subscribe(data => {
             this.generateInterList();
         }, error => {
             this.displayLoading = "none";
@@ -620,7 +620,7 @@ class ReplaysComponent {
     }
     setInterToVideo(video, inter) {
         console.log(video, inter);
-        this.http.post('http://localhost:8888/api/intertovideo', { fileName: video, idInter: inter }).subscribe(data => {
+        this.http.post('http://192.168.13.110:8888/api/intertovideo', { fileName: video, idInter: inter }).subscribe(data => {
             this.generateInterList();
         }, error => {
             this.displayLoading = "none";
@@ -628,7 +628,7 @@ class ReplaysComponent {
     }
     createInter(data) {
         for (let i = 0; i < data.length; i++) {
-            this.http.post('http://localhost:8888/api/newinter', { startTime: data[i][0][1] })
+            this.http.post('http://192.168.13.110:8888/api/newinter', { startTime: data[i][0][1] })
                 .subscribe(data2 => {
                 for (let j = 0; j < data[i].length; j++) {
                     console.log(data[i][j][0]);
@@ -668,7 +668,7 @@ class ReplaysComponent {
     }
     getDroits() {
         var mail = this.getCookie("email");
-        var url = "http://localhost:8888/api/droits?mail=" + mail;
+        var url = "http://192.168.13.110:8888/api/droits?mail=" + mail;
         this.http.get(url)
             .subscribe(result => {
             var x = JSON.parse(JSON.stringify(result))[0];
@@ -694,7 +694,7 @@ class ReplaysComponent {
     }
     ngOnInit() {
         this.getDroits();
-        this.http.get("http://localhost:8888/api/videoFileNameList")
+        this.http.get("http://192.168.13.110:8888/api/videoFileNameList")
             .subscribe(result => {
             this.checkIfNewVideos(result);
         }, error => {
@@ -787,7 +787,7 @@ class StatisticsComponent {
     }
     toggleModal(idVol) {
         if (idVol.length != 0) {
-            var url = "http://localhost:8888/api/getwarnings?id=" + idVol;
+            var url = "http://192.168.13.110:8888/api/getwarnings?id=" + idVol;
             this.http.get(url)
                 .subscribe(result => {
                 var x = JSON.parse(JSON.stringify(result));
@@ -885,7 +885,7 @@ class StatisticsComponent {
         this.addFlightToDatabase(idInter, startTime, flightTime, startLatitude, startLongitude, batteryGraph, heightGraph, maxHeight, data, datawarnings);
     }
     addFlightToDatabase(idInter, startTime, flightTime, startLatitude, startLongitude, batteryGraph, heightGraph, maxHeight, data, datawarnings) {
-        this.http.post('http://localhost:8888/api/newflight', { idInter, startTime, flightTime, startLatitude, startLongitude, batteryGraph, heightGraph, maxHeight }).subscribe(res => {
+        this.http.post('http://192.168.13.110:8888/api/newflight', { idInter, startTime, flightTime, startLatitude, startLongitude, batteryGraph, heightGraph, maxHeight }).subscribe(res => {
             console.log("addFlightToDatabase done");
             this.addFlightDataToDatabase(data, datawarnings);
         }, error => {
@@ -900,7 +900,7 @@ class StatisticsComponent {
                     var dataAddress = res["Response"]["View"][0]["Result"][0]["Location"]["Address"];
                     var commune = dataAddress["City"];
                     var street = dataAddress["Street"];
-                    this.http.post('http://localhost:8888/api/newaddress', { idInter, commune, street })
+                    this.http.post('http://192.168.13.110:8888/api/newaddress', { idInter, commune, street })
                         .subscribe(res => {
                     }, error => {
                         // this.displayLoading = "none";
@@ -910,14 +910,14 @@ class StatisticsComponent {
         }
     }
     addFlightDataToDatabase(data, datawarnings) {
-        this.http.get("http://localhost:8888/api/lastflight")
+        this.http.get("http://192.168.13.110:8888/api/lastflight")
             .subscribe(result => {
             var idVol = JSON.parse(JSON.stringify(result))[0]["idVol"];
             var heure, warn;
             for (let j = 0; j < datawarnings.length; j++) {
                 heure = datawarnings[j][0];
                 warn = datawarnings[j][1];
-                this.http.post('http://localhost:8888/api/newwarnings', { idVol, heure, warn }).subscribe(data => {
+                this.http.post('http://192.168.13.110:8888/api/newwarnings', { idVol, heure, warn }).subscribe(data => {
                 }, error => {
                     this.displayLoading = "none";
                 });
@@ -939,7 +939,7 @@ class StatisticsComponent {
                     aircraftYaw = data[i][5];
                     gimbalYaw = data[i][6];
                 }
-                this.http.post('http://localhost:8888/api/newdataflight', { idVol, hour, time, latitude, longitude, height, battery, aircraftYaw, gimbalYaw }).subscribe(data2 => {
+                this.http.post('http://192.168.13.110:8888/api/newdataflight', { idVol, hour, time, latitude, longitude, height, battery, aircraftYaw, gimbalYaw }).subscribe(data2 => {
                     if (i == data.length - 1) {
                         this.displayLoading = "none";
                         this.buttonText = "Importer des données";
@@ -1263,7 +1263,7 @@ class StatisticsComponent {
     }
     getDroits() {
         var mail = this.getCookie("email");
-        var url = "http://localhost:8888/api/droits?mail=" + mail;
+        var url = "http://192.168.13.110:8888/api/droits?mail=" + mail;
         this.http.get(url)
             .subscribe(result => {
             var x = JSON.parse(JSON.stringify(result))[0];
@@ -1296,7 +1296,7 @@ class StatisticsComponent {
         if (isNaN(id)) {
             alert('URL Error');
         }
-        var url = "http://localhost:8888/api/interflight?id=" + id;
+        var url = "http://192.168.13.110:8888/api/interflight?id=" + id;
         this.http.get(url)
             .subscribe(result => {
             var x = JSON.parse(JSON.stringify(result));
@@ -1318,7 +1318,7 @@ class StatisticsComponent {
         }, error => {
             this.displayLoading = "none";
         });
-        var url = "http://localhost:8888/api/intervention?id=" + id;
+        var url = "http://192.168.13.110:8888/api/intervention?id=" + id;
         this.http.get(url)
             .subscribe(result => {
             var x = JSON.parse(JSON.stringify(result));
@@ -1533,7 +1533,7 @@ class HomeComponent {
     }
     getDroits() {
         var mail = this.getCookie("email");
-        var url = "http://localhost:8888/api/droits?mail=" + mail;
+        var url = "http://192.168.13.110:8888/api/droits?mail=" + mail;
         this.http.get(url)
             .subscribe(result => {
             var x = JSON.parse(JSON.stringify(result))[0];
@@ -2252,7 +2252,7 @@ class AppComponent {
             var url = "";
             var code = window.location.href.split('?')[1];
             if (!code || !code.startsWith("code=")) {
-                url = "http://localhost:8888/connexion";
+                url = "http://192.168.13.110:8888/connexion";
                 this.http.get(url, { responseType: 'text' })
                     .subscribe(result => {
                     var x = JSON.parse(JSON.stringify(result));
@@ -2265,7 +2265,7 @@ class AppComponent {
                 });
             }
             else {
-                url = "http://localhost:8888/connexion?" + code;
+                url = "http://192.168.13.110:8888/connexion?" + code;
                 this.http.get(url, { responseType: 'text' })
                     .subscribe(result => {
                     var x = JSON.parse(JSON.stringify(result.substring(1, result.length - 1)));
@@ -2549,7 +2549,7 @@ class ReplayinterComponent {
         return res;
     }
     addVideoToDb(data) {
-        this.http.post('http://localhost:8888/api/newvideo', { fileName: data[1], videoName: 'flag', recordTime: data[0] }).subscribe(data => {
+        this.http.post('http://192.168.13.110:8888/api/newvideo', { fileName: data[1], videoName: 'flag', recordTime: data[0] }).subscribe(data => {
             //  console.log(data);
         });
     }
@@ -2585,14 +2585,14 @@ class ReplayinterComponent {
             this.displayError = "block";
         }
         else {
-            this.http.post('http://localhost:8888/api/editvideoname', { fileName: this.fileName, newname: this.newTitle }).subscribe(data => {
+            this.http.post('http://192.168.13.110:8888/api/editvideoname', { fileName: this.fileName, newname: this.newTitle }).subscribe(data => {
                 window.location.href = window.location.href;
             });
         }
     }
     getDroits() {
         var mail = this.getCookie("email");
-        var url = "http://localhost:8888/api/droits?mail=" + mail;
+        var url = "http://192.168.13.110:8888/api/droits?mail=" + mail;
         this.http.get(url)
             .subscribe(result => {
             var x = JSON.parse(JSON.stringify(result))[0];
@@ -2621,7 +2621,7 @@ class ReplayinterComponent {
         if (this.target != undefined) {
             this.player = Object(video_js__WEBPACK_IMPORTED_MODULE_0__["default"])(this.target.nativeElement, this.videoSource, function onPlayerReady() { });
         }
-        this.http.get("http://localhost:8888/api/videoFileNameList")
+        this.http.get("http://192.168.13.110:8888/api/videoFileNameList")
             .subscribe(result => {
             this.checkIfNewVideos(result);
         }, error => {
@@ -2630,7 +2630,7 @@ class ReplayinterComponent {
         var location = window.location.href;
         var id = parseInt(location.split('?')[1].substring(3));
         this.interId = id;
-        this.http.get("http://localhost:8888/api/videoByInter?id=" + id)
+        this.http.get("http://192.168.13.110:8888/api/videoByInter?id=" + id)
             .subscribe(result => {
             var videoResult = JSON.parse(JSON.stringify(result));
             for (let i = 0; i < videoResult.length; i++) {
@@ -2745,7 +2745,7 @@ class LivestreamComponent {
     }
     getDroits() {
         var mail = this.getCookie("email");
-        var url = "http://localhost:8888/api/droits?mail=" + mail;
+        var url = "http://192.168.13.110:8888/api/droits?mail=" + mail;
         this.http.get(url)
             .subscribe(result => {
             var x = JSON.parse(JSON.stringify(result))[0];
@@ -2900,15 +2900,15 @@ class FooterComponent {
             alert("Email incorrect");
         }
         else {
-            var url = "http://localhost:8888/api/droits?mail=" + this.email;
+            var url = "http://192.168.13.110:8888/api/droits?mail=" + this.email;
             this.http.get(url)
                 .subscribe(result => {
                 var x = JSON.parse(JSON.stringify(result));
                 console.log(x);
                 if (x.length == 0) {
-                    this.http.post('http://localhost:8888/api/newuser', { name: this.email })
+                    this.http.post('http://192.168.13.110:8888/api/newuser', { name: this.email })
                         .subscribe(data => {
-                        this.http.post('http://localhost:8888/api/updateuser', { name: this.email, superadmin: this.newsuperadmin, admin: this.newadmin, dispatch: this.newdispatch })
+                        this.http.post('http://192.168.13.110:8888/api/updateuser', { name: this.email, superadmin: this.newsuperadmin, admin: this.newadmin, dispatch: this.newdispatch })
                             .subscribe(data => {
                             this.sendText = "Envoi...";
                             setTimeout(() => {
@@ -2928,7 +2928,7 @@ class FooterComponent {
                     });
                 }
                 else {
-                    this.http.post('http://localhost:8888/api/updateuser', { name: this.email, superadmin: this.newsuperadmin, admin: this.newadmin, dispatch: this.newdispatch })
+                    this.http.post('http://192.168.13.110:8888/api/updateuser', { name: this.email, superadmin: this.newsuperadmin, admin: this.newadmin, dispatch: this.newdispatch })
                         .subscribe(data => {
                         this.sendText = "Envoi...";
                         setTimeout(() => {
@@ -2993,7 +2993,7 @@ class FooterComponent {
     }
     getDroits() {
         var mail = this.getCookie("email");
-        var url = "http://localhost:8888/api/droits?mail=" + mail;
+        var url = "http://192.168.13.110:8888/api/droits?mail=" + mail;
         this.http.get(url)
             .subscribe(result => {
             var x = JSON.parse(JSON.stringify(result))[0];
@@ -3014,7 +3014,7 @@ class FooterComponent {
         });
     }
     loadDroitsPersons() {
-        var url = "http://localhost:8888/api/getallusers";
+        var url = "http://192.168.13.110:8888/api/getallusers";
         this.http.get(url)
             .subscribe(result => {
             var x = JSON.parse(JSON.stringify(result));

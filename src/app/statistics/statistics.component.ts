@@ -78,7 +78,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
 
   toggleModal(idVol: string) {
     if(idVol.length != 0) {
-      var url = "http://localhost:8888/api/getwarnings?id=" + idVol;
+      var url = "http://192.168.13.110:8888/api/getwarnings?id=" + idVol;
       this.http.get(url)
         .subscribe(result => {
           var x = JSON.parse(JSON.stringify(result));
@@ -188,7 +188,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
   }
 
   addFlightToDatabase(idInter:number, startTime:string, flightTime:number, startLatitude:string, startLongitude:string, batteryGraph:any, heightGraph:any, maxHeight:any, data:any, datawarnings: any) {
-    this.http.post<any>('http://localhost:8888/api/newflight', {idInter, startTime, flightTime, startLatitude, startLongitude, batteryGraph, heightGraph, maxHeight}).subscribe(res => {
+    this.http.post<any>('http://192.168.13.110:8888/api/newflight', {idInter, startTime, flightTime, startLatitude, startLongitude, batteryGraph, heightGraph, maxHeight}).subscribe(res => {
       console.log("addFlightToDatabase done")
       this.addFlightDataToDatabase(data, datawarnings);
     },
@@ -204,7 +204,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
             var dataAddress = res["Response"]["View"][0]["Result"][0]["Location"]["Address"];
             var commune = dataAddress["City"];
             var street = dataAddress["Street"];
-            this.http.post<any>('http://localhost:8888/api/newaddress', {idInter, commune, street})
+            this.http.post<any>('http://192.168.13.110:8888/api/newaddress', {idInter, commune, street})
             .subscribe(res => {
               
             },
@@ -218,7 +218,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
   }
 
   addFlightDataToDatabase(data:any, datawarnings:any) {
-    this.http.get("http://localhost:8888/api/lastflight")
+    this.http.get("http://192.168.13.110:8888/api/lastflight")
     .subscribe(result => {
       var idVol = JSON.parse(JSON.stringify(result))[0]["idVol"];
 
@@ -226,7 +226,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
       for(let j=0;j<datawarnings.length; j++) { 
         heure = datawarnings[j][0];
         warn = datawarnings[j][1];
-        this.http.post<any>('http://localhost:8888/api/newwarnings', {idVol, heure, warn}).subscribe(data => {
+        this.http.post<any>('http://192.168.13.110:8888/api/newwarnings', {idVol, heure, warn}).subscribe(data => {
       
         },
         error => {
@@ -253,7 +253,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
         }
         
 
-        this.http.post<any>('http://localhost:8888/api/newdataflight', {idVol, hour, time, latitude, longitude, height, battery, aircraftYaw, gimbalYaw}).subscribe(data2 => {
+        this.http.post<any>('http://192.168.13.110:8888/api/newdataflight', {idVol, hour, time, latitude, longitude, height, battery, aircraftYaw, gimbalYaw}).subscribe(data2 => {
           if(i == data.length-1) {
             this.displayLoading = "none";
             this.buttonText = "Importer des données"; 
@@ -618,7 +618,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
 
   getDroits() {
     var mail = this.getCookie("email");
-    var url = "http://localhost:8888/api/droits?mail=" + mail; 
+    var url = "http://192.168.13.110:8888/api/droits?mail=" + mail; 
     this.http.get(url)
       .subscribe(result => {
         var x = JSON.parse(JSON.stringify(result))[0];
@@ -656,7 +656,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
     if(isNaN(id)) {
       alert('URL Error')
     }
-    var url = "http://localhost:8888/api/interflight?id=" + id;
+    var url = "http://192.168.13.110:8888/api/interflight?id=" + id;
     this.http.get(url)
       .subscribe(result => {
         var x = JSON.parse(JSON.stringify(result));
@@ -678,7 +678,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
     error => {
       this.displayLoading = "none";
     });
-    var url = "http://localhost:8888/api/intervention?id=" + id;
+    var url = "http://192.168.13.110:8888/api/intervention?id=" + id;
     this.http.get(url)
       .subscribe(result => {
         var x = JSON.parse(JSON.stringify(result));

@@ -82,7 +82,7 @@ export class LivestreamComponent implements OnInit {
 
   getDroits() {
     var mail = this.getCookie("email");
-    var url = "http://localhost:8888/api/droits?mail=" + mail; 
+    var url = "http://192.168.13.110:8888/api/droits?mail=" + mail; 
     this.http.get(url)
       .subscribe(result => {
         var x = JSON.parse(JSON.stringify(result))[0];

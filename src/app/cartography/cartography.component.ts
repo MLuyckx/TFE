@@ -209,7 +209,7 @@ export class CartographyComponent implements OnInit {
 
   ngOnChanges() {
     for(let i=0;i<this.idVol.length; i++) {
-      var url = "http://localhost:8888/api/livedata?id=" + this.idVol[i]["idVol"];
+      var url = "http://192.168.13.110:8888/api/livedata?id=" + this.idVol[i]["idVol"];
       console.log(url)
       // var url = "http://localhost:8888/api/livedata?id=9";
       this.http.get(url)

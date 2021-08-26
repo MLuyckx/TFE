@@ -64,7 +64,7 @@ export class ReplaysComponent implements OnInit {
       this.displayError = "block";
     }
     else {
-      this.http.post<any>('http://localhost:8888/api/editinterventionname', {idInter: idInter, newname: this.newTitle}).subscribe(data => {
+      this.http.post<any>('http://192.168.13.110:8888/api/editinterventionname', {idInter: idInter, newname: this.newTitle}).subscribe(data => {
         this.generateInterList();
         this.displayModal = "none"
       })
@@ -73,7 +73,7 @@ export class ReplaysComponent implements OnInit {
 
   generateInterList(){
     var x:any [] = [];
-    this.http.get("http://localhost:8888/api/interventions")
+    this.http.get("http://192.168.13.110:8888/api/interventions")
       .subscribe(result => {
         x = JSON.parse(JSON.stringify(result));
         for(let i=0;i<x.length; i++) {
@@ -115,7 +115,7 @@ export class ReplaysComponent implements OnInit {
 
   getVideoNumber(data: any[]) {
     for(let j=0;j<data.length;j++){
-      this.http.get("http://localhost:8888/api/videoByInter?id=" + data[j]["idInter"])
+      this.http.get("http://192.168.13.110:8888/api/videoByInter?id=" + data[j]["idInter"])
       .subscribe(result => {
         var x = JSON.parse(JSON.stringify(result));
         data[j]["imageSource"] = "../../assets/drone.png" 
@@ -124,7 +124,7 @@ export class ReplaysComponent implements OnInit {
       error => {
         this.displayLoading = "none";
       });
-      this.http.get("http://localhost:8888/api/statsByInter?id=" + data[j]["idInter"])
+      this.http.get("http://192.168.13.110:8888/api/statsByInter?id=" + data[j]["idInter"])
       .subscribe(result => {
         var x = JSON.parse(JSON.stringify(result))
         if(x.length == 0)  {
@@ -184,11 +184,11 @@ export class ReplaysComponent implements OnInit {
   }
 
   checkIfUnassignedVideos() {
-    this.http.get("http://localhost:8888/api/unassignedVideos")
+    this.http.get("http://192.168.13.110:8888/api/unassignedVideos")
       .subscribe(res => {
         var videoResult = JSON.parse(JSON.stringify(res));
         if(videoResult.length != 0) {
-          this.http.get("http://localhost:8888/api/lastInter")
+          this.http.get("http://192.168.13.110:8888/api/lastInter")
             .subscribe(res2 => {
               var interResult = JSON.parse(JSON.stringify(res2));
               var date:number, dateLastInter:any, idInter:number;
@@ -250,7 +250,7 @@ export class ReplaysComponent implements OnInit {
   }
 
   addVideoToDb(data:any) {
-    this.http.post<any>('http://localhost:8888/api/newvideo', {fileName: data[1], videoName: data[1], recordTime: data[0]}).subscribe(data => {
+    this.http.post<any>('http://192.168.13.110:8888/api/newvideo', {fileName: data[1], videoName: data[1], recordTime: data[0]}).subscribe(data => {
       this.generateInterList();
     },
     error => {
@@ -260,7 +260,7 @@ export class ReplaysComponent implements OnInit {
 
   setInterToVideo(video: string, inter: number) {
     console.log(video, inter)
-    this.http.post<any>('http://localhost:8888/api/intertovideo', {fileName: video, idInter: inter}).subscribe(data => {
+    this.http.post<any>('http://192.168.13.110:8888/api/intertovideo', {fileName: video, idInter: inter}).subscribe(data => {
       this.generateInterList();
     },
     error => {
@@ -270,7 +270,7 @@ export class ReplaysComponent implements OnInit {
 
   createInter(data:any[][]){//, maxIdInter: number) {
     for(let i=0;i<data.length; i++) {
-      this.http.post<any>('http://localhost:8888/api/newinter', {startTime: data[i][0][1]})
+      this.http.post<any>('http://192.168.13.110:8888/api/newinter', {startTime: data[i][0][1]})
       .subscribe(data2 => {
         for(let j=0; j<data[i].length; j++) {
           console.log(data[i][j][0]);
@@ -314,7 +314,7 @@ export class ReplaysComponent implements OnInit {
 
   getDroits() {
     var mail = this.getCookie("email");
-    var url = "http://localhost:8888/api/droits?mail=" + mail; 
+    var url = "http://192.168.13.110:8888/api/droits?mail=" + mail; 
     this.http.get(url)
       .subscribe(result => {
         var x = JSON.parse(JSON.stringify(result))[0];
@@ -344,7 +344,7 @@ export class ReplaysComponent implements OnInit {
 
   ngOnInit(): void {
     this.getDroits();
-    this.http.get("http://localhost:8888/api/videoFileNameList")
+    this.http.get("http://192.168.13.110:8888/api/videoFileNameList")
       .subscribe(result => {
         this.checkIfNewVideos(result);
     },
