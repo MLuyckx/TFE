@@ -22,7 +22,7 @@ const oAuth2Client = new google.auth.OAuth2(
 const scopes = ["https://www.googleapis.com/auth/userinfo.email"];
 
 var con = mysql.createConnection({
-    host: "localhost",
+    host: "192.168.13.110",
     user: "root",
     password: "Craft13Zeph$$$",
     database: "drone"
@@ -64,7 +64,7 @@ app.get('/connexion', async (req,res) => {
         res.send(url)
     } else {
         try {
-            const qs = new url.URL(req.url, 'http://localhost:8888').searchParams;
+            const qs = new url.URL(req.url, 'http://192.168.13.110:8888').searchParams;
             var code = qs.get('code');
             const r = await oAuth2Client.getToken(code);
             oAuth2Client.setCredentials(r.tokens);
@@ -342,5 +342,5 @@ app.get('/api/unassignedVideos', (req,res) => {
     });
 });
 
-console.log("App listening on localhost:8888")
-app.listen(8888, "localhost");
+console.log("App listening on 192.168.13.110:8888")
+app.listen(8888, "192.168.13.110");
