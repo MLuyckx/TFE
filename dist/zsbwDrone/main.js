@@ -2246,61 +2246,60 @@ class AppComponent {
         this.tryingToConnect = false;
         this.title = 'Drone - ZSBW';
     }
-    connection() {
-        var token = this.getCookie('token');
-        if (!token) {
-            var url = "";
-            var code = window.location.href.split('?')[1];
-            if (!code || !code.startsWith("code=")) {
-                url = "http://192.168.13.110:8888/connexion";
-                this.http.get(url, { responseType: 'text' })
-                    .subscribe(result => {
-                    var x = JSON.parse(JSON.stringify(result));
-                    var split = x.split('&flowName');
-                    var url = split[0] + "&hd=incendiebw.be&flowName" + split[1];
-                    window.location.href = url;
-                }, error => {
-                    console.log(error);
-                    this.tryingToConnect = false;
-                });
-            }
-            else {
-                url = "http://192.168.13.110:8888/connexion?" + code;
-                this.http.get(url, { responseType: 'text' })
-                    .subscribe(result => {
-                    var x = JSON.parse(JSON.stringify(result.substring(1, result.length - 1)));
-                    x = JSON.parse(x);
-                    if (x["infos"]["email"].endsWith("@incendiebw") || x["infos"]["email"] == "luyckx.matthieu@gmail.com") {
-                        this.setCookie('token', x["token"], 1);
-                        this.setCookie('email', x["infos"]["email"], 1);
-                    }
-                    else {
-                        alert("Cette adresse mail n'est pas autorisée. Veuillez réessayer");
-                    }
-                    window.location.href = '/';
-                }, error => {
-                    console.log(error);
-                });
-            }
-        }
-        else {
-            var token = this.getCookie('token');
-            url = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=" + token;
-            this.http.get(url)
-                .subscribe(result => {
-                this.isConnected = true;
-            }, error => {
-                if (error.status == 400) {
-                    this.isConnected = false;
-                    this.deleteCookie('token');
-                    this.connection();
-                }
-                else {
-                    console.log(error);
-                }
-            });
-        }
-    }
+    // connection() {
+    //   var token = this.getCookie('token');
+    //   if(!token) {
+    //     var url = "";
+    //     var code = window.location.href.split('?')[1];
+    //     if(!code || !code.startsWith("code=")) {
+    //       url = "http://192.168.13.110:8888/connexion";
+    //       this.http.get(url,  {responseType: 'text'})
+    //       .subscribe(result => {
+    //         var x = JSON.parse(JSON.stringify(result));
+    //         var split = x.split('&flowName');
+    //         var url = split[0] + "&hd=incendiebw.be&flowName" + split[1]
+    //         window.location.href = url;
+    //       },
+    //       error => {
+    //         console.log(error)
+    //         this.tryingToConnect = false;
+    //       });
+    //     } else {
+    //         url = "http://192.168.13.110:8888/connexion?" + code;
+    //         this.http.get(url, {responseType: 'text'})
+    //         .subscribe(result => {
+    //           var x = JSON.parse(JSON.stringify(result.substring(1, result.length-1)));
+    //           x = JSON.parse(x)
+    //           if(x["infos"]["email"].endsWith("@incendiebw") || x["infos"]["email"] == "luyckx.matthieu@gmail.com") {
+    //             this.setCookie('token', x["token"], 1);
+    //             this.setCookie('email', x["infos"]["email"],1)
+    //           } else {
+    //             alert("Cette adresse mail n'est pas autorisée. Veuillez réessayer")
+    //           }
+    //           window.location.href = '/'
+    //         },
+    //         error => {
+    //           console.log(error)
+    //         });      
+    //     }
+    //   } else {
+    //     var token = this.getCookie('token');    
+    //     url = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=" + token;
+    //     this.http.get(url)
+    //     .subscribe(result => {
+    //       this.isConnected = true;
+    //     },
+    //     error => {
+    //       if(error.status == 400) {
+    //         this.isConnected = false;
+    //         this.deleteCookie('token');
+    //         this.connection();
+    //       } else {
+    //         console.log(error)
+    //       }
+    //     });
+    //   }
+    // }
     getCookie(name) {
         let ca = document.cookie.split(';');
         let caLen = ca.length;
@@ -2325,13 +2324,12 @@ class AppComponent {
         document.cookie = `${name}=${value}; ${expires}${cpath}`;
     }
     ngOnUpdate() {
-        // if(!this.isConnected) {
-        //   this.connection();
-        // }
     }
     ngOnInit() {
         this.isConnected = false;
-        this.connection();
+        // this.connection();
+        this.setCookie('email', 'luyckx.matthieu@gmail.com', 1);
+        this.isConnected = true;
     }
 }
 

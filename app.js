@@ -6,7 +6,6 @@ const {google} = require('googleapis');
 const url = require('url');
 const session = require('express-session');
 var genuuid=require('uuid/v4');
-const { ConsoleReporter } = require('jasmine');
 
 const app = express();
 
@@ -16,13 +15,13 @@ app.use(express.json());
 const oAuth2Client = new google.auth.OAuth2(
     "790181222647-97ed31co551pqqfpfu4663lbu3qtuuab.apps.googleusercontent.com",
     "-PDWRxmAPnDhdtjbCcm-EXBL",
-    "http://localhost:4200"
+    "https://drone.zsbw.be"
 );
 
 const scopes = ["https://www.googleapis.com/auth/userinfo.email"];
 
 var con = mysql.createConnection({
-    host: "192.168.13.110",
+    host: "localhost",
     user: "root",
     password: "Craft13Zeph$$$",
     database: "drone"
@@ -343,4 +342,4 @@ app.get('/api/unassignedVideos', (req,res) => {
 });
 
 console.log("App listening on 192.168.13.110:8888")
-app.listen(8888, "192.168.13.110");
+app.listen(8888);
