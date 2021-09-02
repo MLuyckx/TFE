@@ -3,7 +3,6 @@ body {
 }
 
 #contenu {
-    background-image: url("/admin/assets/bgImg.jpg");
     background-size: cover;
     width: 60%;
     margin-left: 20%;

@@ -37,17 +37,15 @@ onDocumentClick(event: any) {
   }
 }
 
+//Se déconnecte (Google Auth)
 logout() {
   this.deleteCookie("token");
   this.deleteCookie("email")
   window.location.href = "/"
 }
 
+//Modifie les droits des utilisateurs (nécessite d'être Super Admin)
 updateDroits() {
-  console.log(this.email);
-  console.log(this.newsuperadmin);
-  console.log(this.newadmin);
-  console.log(this.newdispatch);
   this.sendText = "Envoi..."
   if(this.email == "" || !this.email.includes("@")) {
     this.sendText = "Soumettre";
@@ -108,6 +106,7 @@ updateDroits() {
   }
 }
 
+//Récupère les droits d'un certain utilisateur et les affiche
 changeUser(name:string, isSuperAdmin: string, isAdmin:string, isDispatch: string, target:any) {
   this.email = name;
   
@@ -131,6 +130,7 @@ changeUser(name:string, isSuperAdmin: string, isAdmin:string, isDispatch: string
   target.scrollTo({top: 50, behavior: 'smooth'});
 }
 
+//Affiche/Enleve le popup d'administratio
 toggleModal() {
   if(!this.isModalOn) {
     this.loadDroitsPersons();
@@ -143,10 +143,12 @@ toggleModal() {
   }
 }
 
+//Supprime le cookie
 deleteCookie(name: string) {
   this.setCookie(name, '', -1);
 }
 
+//Ajoute un cookie
 setCookie(name: string, value: string, expireDays: number, path: string = '') {
   let d:Date = new Date();
   d.setTime(d.getTime() + expireDays * 24 * 60 * 60 * 1000);
@@ -155,6 +157,7 @@ setCookie(name: string, value: string, expireDays: number, path: string = '') {
   document.cookie = `${name}=${value}; ${expires}${cpath}`;
 }
 
+//Récupère les droits de l'utilisateur connecté
 getDroits() {
   var mail = this.getCookie("email");
   var url = "http://192.168.13.110:8888/api/droits?mail=" + mail; 
@@ -176,6 +179,7 @@ getDroits() {
   });
 }
 
+//Récupère l'ensemble des droits 
 loadDroitsPersons() {
   var url = "http://192.168.13.110:8888/api/getallusers"; 
   this.http.get(url)
@@ -208,7 +212,7 @@ loadDroitsPersons() {
     console.log(error);
   });
 }
-
+//Récupère la valeur du cookie
 getCookie(name: string) {
   let ca: Array<string> = document.cookie.split(';');
   let caLen: number = ca.length;

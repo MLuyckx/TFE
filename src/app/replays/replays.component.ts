@@ -8,6 +8,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 })
 export class ReplaysComponent implements OnInit {
 
+  //Création des variables globales
   interId:number = 1;
   videoNumber: any[][] = [];
   styleChoixInter = "block";
@@ -43,6 +44,7 @@ export class ReplaysComponent implements OnInit {
 
   constructor(private http: HttpClient) { }
 
+  //Affiche/Enleve le modal (modificatin du nom de l'intervention)
   toggleModal(inter:any) {
     this.newTitle = "";
     this.displayError = "none"
@@ -58,6 +60,7 @@ export class ReplaysComponent implements OnInit {
     }
   }
 
+  //Soumet le nouveau nom dans la base de données
   editName(idInter:any) {
     this.displayError = "none";
     if(this.newTitle.length == 0) {
@@ -71,6 +74,7 @@ export class ReplaysComponent implements OnInit {
     }
   }
 
+  //Crée la liste des interventions après demande à la db
   generateInterList(){
     var x:any [] = [];
     this.http.get("http://192.168.13.110:8888/api/interventions")
@@ -106,6 +110,7 @@ export class ReplaysComponent implements OnInit {
       });
   }
 
+
   checkImage(imageSrc:string, good:any, bad:any) {
     var img = new Image();
     img.onload = good; 
@@ -113,6 +118,7 @@ export class ReplaysComponent implements OnInit {
     img.src = imageSrc;
   } 
 
+  //Récupère en base de données le nombre de vidéos par intervention
   getVideoNumber(data: any[]) {
     for(let j=0;j<data.length;j++){
       this.http.get("http://192.168.13.110:8888/api/videoByInter?id=" + data[j]["idInter"])
@@ -144,7 +150,7 @@ export class ReplaysComponent implements OnInit {
     console.log(this.inters)
   }
 
-
+  //Vérifie si de nouvelles vidéos sont dispos (et ne sont pas encore en db)
   checkIfNewVideos(dbData:any) {
     this.http.get("http://192.168.13.110:8080/getreplays")
       .subscribe(result => {
@@ -183,6 +189,7 @@ export class ReplaysComponent implements OnInit {
     }, 500);
   }
 
+  //Vérifie si des vidéos en db ne sont pas assignées à une intervention
   checkIfUnassignedVideos() {
     this.http.get("http://192.168.13.110:8888/api/unassignedVideos")
       .subscribe(res => {
@@ -249,6 +256,7 @@ export class ReplaysComponent implements OnInit {
       });
   }
 
+  //Ajoute une vidéo en base de données
   addVideoToDb(data:any) {
     this.http.post<any>('http://192.168.13.110:8888/api/newvideo', {fileName: data[1], videoName: data[1], recordTime: data[0]}).subscribe(data => {
       this.generateInterList();
@@ -258,6 +266,7 @@ export class ReplaysComponent implements OnInit {
     })
   }
 
+  //Assigne une interventions à une vidéo
   setInterToVideo(video: string, inter: number) {
     console.log(video, inter)
     this.http.post<any>('http://192.168.13.110:8888/api/intertovideo', {fileName: video, idInter: inter}).subscribe(data => {
@@ -268,6 +277,7 @@ export class ReplaysComponent implements OnInit {
     })
   }
 
+  //Crée une nouvelle inter en db
   createInter(data:any[][]){//, maxIdInter: number) {
     for(let i=0;i<data.length; i++) {
       this.http.post<any>('http://192.168.13.110:8888/api/newinter', {startTime: data[i][0][1]})
@@ -286,6 +296,7 @@ export class ReplaysComponent implements OnInit {
     this.generateInterList();
   }
 
+  //Routing
   moveToInterReplay(inter:any) {
     if(inter.numberOfVideos == 0) {
       return;
@@ -295,10 +306,12 @@ export class ReplaysComponent implements OnInit {
     
   }
 
+  //Routing
   moveToInterStats(inter:any) {
     window.location.href = '/stats?id=' + inter["idInter"];
   }
 
+  //Changement du format de date
   toDatetimeFormat(date:string) {
     var monthString = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     var month = date[8] + date[9] + date[10]; 
@@ -312,6 +325,7 @@ export class ReplaysComponent implements OnInit {
     return res;
   }
 
+  //Récupère les droits d'accès de l'utilisateur connecté
   getDroits() {
     var mail = this.getCookie("email");
     var url = "http://192.168.13.110:8888/api/droits?mail=" + mail; 
@@ -327,6 +341,7 @@ export class ReplaysComponent implements OnInit {
       });
   }
 
+  //Récupère la valeur du cookie
   getCookie(name: string) {
     let ca: Array<string> = document.cookie.split(';');
     let caLen: number = ca.length;

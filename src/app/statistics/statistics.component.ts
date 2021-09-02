@@ -76,6 +76,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
     }
   }
 
+  // Affiche/Enleve le modal (qui reprend les warnings)
   toggleModal(idVol: string) {
     if(idVol.length != 0) {
       var url = "http://192.168.13.110:8888/api/getwarnings?id=" + idVol;
@@ -156,6 +157,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
     }
   }
 
+  //Traites les données avant de les ajouter en base de données
   insertFlightToDatabase(data:any, datawarnings:any) {
     var idInter = parseInt((window.location.href).split("?")[1].substring(3));
     var startTime = data[1][0];
@@ -179,14 +181,15 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
       }
     }
 
+    //Déclare les variables globales
     var startLatitude = data[1][2];
     var startLongitude = data[1][3];
     var batteryGraph = this.drawBattery(data, (this.widthBattery-40), (this.heightBattery-40));
     var heightGraph = this.drawAltitude(data, (this.widthAltitude-40), (this.heightAltitude-40));
-    console.log("insertFlightToDatabase done")
     this.addFlightToDatabase(idInter, startTime, flightTime, startLatitude, startLongitude, batteryGraph, heightGraph, maxHeight, data, datawarnings);
   }
 
+  //Ajoute le vol en base de données
   addFlightToDatabase(idInter:number, startTime:string, flightTime:number, startLatitude:string, startLongitude:string, batteryGraph:any, heightGraph:any, maxHeight:any, data:any, datawarnings: any) {
     this.http.post<any>('http://192.168.13.110:8888/api/newflight', {idInter, startTime, flightTime, startLatitude, startLongitude, batteryGraph, heightGraph, maxHeight}).subscribe(res => {
       console.log("addFlightToDatabase done")
@@ -209,7 +212,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
               
             },
             error => {
-              // this.displayLoading = "none";
+              
             })
           }
           
@@ -217,6 +220,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
     }  
   }
 
+  //Ajoutes les données de vol en base de données
   addFlightDataToDatabase(data:any, datawarnings:any) {
     this.http.get("http://192.168.13.110:8888/api/lastflight")
     .subscribe(result => {
@@ -611,11 +615,13 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
     return final;
   }
 
+  //Change l'altitude (ft -> m)
   changeHeightFormat(height:any) {
     var heightInMeters = Math.round(height * 0.3048);
     return heightInMeters;
   }
 
+  //Récupères les droits liées à l'utilisateur connecté
   getDroits() {
     var mail = this.getCookie("email");
     var url = "http://192.168.13.110:8888/api/droits?mail=" + mail; 
@@ -631,6 +637,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit  {
       });
   }
 
+  //Récupère la valeur du cookie
   getCookie(name: string) {
     let ca: Array<string> = document.cookie.split(';');
     let caLen: number = ca.length;

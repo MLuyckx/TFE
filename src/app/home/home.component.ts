@@ -13,6 +13,7 @@ export class HomeComponent implements OnInit {
   liveAccess = false;
   replaysAccess = false;
 
+  //Routing
   moveToLive() {
     if(this.liveAccess) {
       window.location.href = "/live"
@@ -21,6 +22,7 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  //Routing
   moveToInters() {
     if(this.replaysAccess) {
       window.location.href = "/inters"
@@ -29,6 +31,7 @@ export class HomeComponent implements OnInit {
     }
   }
   
+  //Récupères les droits de l'utilisateur connecté
   getDroits() {
     var mail = this.getCookie("email");
     var url = "http://192.168.13.110:8888/api/droits?mail=" + mail; 
@@ -51,6 +54,7 @@ export class HomeComponent implements OnInit {
       });
   }
 
+  //Récupère la valeur du cookie
   getCookie(name: string) {
     let ca: Array<string> = document.cookie.split(';');
     let caLen: number = ca.length;

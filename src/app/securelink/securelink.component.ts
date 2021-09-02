@@ -38,6 +38,7 @@ export class SecurelinkComponent implements OnInit {
     this.createOptions();
   }
   
+  //Création des variables globales
   validite = "";
   options = [{id: 0, label: 0, selected: false}];
   isShown:Boolean = false;
@@ -45,6 +46,7 @@ export class SecurelinkComponent implements OnInit {
   securedUrl: string = "";
   selectedOption: string = "2";
 
+  //Affiche/Enleve le modal (génération de lien sécurisé)
   toggleModal() {
     if(!this.isModalOn) {
       this.displayModal = "block";
@@ -57,6 +59,7 @@ export class SecurelinkComponent implements OnInit {
     }
   }
   
+  //Création de l'url sécurisé
   generateSecureLink() {
     var duree = parseInt(this.selectedOption);
     var d = new Date();
@@ -77,6 +80,7 @@ export class SecurelinkComponent implements OnInit {
     this.securedUrl = url;
   }
 
+  //Génération des valeurs pour le choix du temps (1 à 24h)
   createOptions() {
     this.options = [];
     for(let i=1; i<=24; i++) {
@@ -88,6 +92,7 @@ export class SecurelinkComponent implements OnInit {
     }
   }
 
+  //Copiage du lien dans le presse-papier
   copyLink() {
     const selBox = document.createElement("input");
     selBox.value = this.securedLink;

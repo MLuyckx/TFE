@@ -20,6 +20,8 @@ export class AppComponent {
 
   constructor(private http: HttpClient) { }
 
+  //Connection avec Google Auth
+
   // connection() {
   //   var token = this.getCookie('token');
   //   if(!token) {
@@ -77,6 +79,7 @@ export class AppComponent {
   //   }
   // }
 
+  //Récupère la valeur du cookie
   getCookie(name: string) {
     let ca: Array<string> = document.cookie.split(';');
     let caLen: number = ca.length;
@@ -92,10 +95,12 @@ export class AppComponent {
     return '';
   }
 
+  //Supprime un cookie
   deleteCookie(name: string) {
       this.setCookie(name, '', -1);
   }
 
+  //Change la valeur d'un cookie
   setCookie(name: string, value: string, expireDays: number, path: string = '') {
     let d:Date = new Date();
     d.setTime(d.getTime() + expireDays * 24 * 60 * 60 * 1000);
@@ -110,8 +115,10 @@ export class AppComponent {
 
   ngOnInit() {
     this.isConnected = false;
+    ////////////////////////////////////////////////////////
     // this.connection();
     this.setCookie('email', 'luyckx.matthieu@gmail.com', 1);
+    ////////////////////////////////////////////////////////
     this.isConnected = true;
   }
   

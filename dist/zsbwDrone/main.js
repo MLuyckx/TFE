@@ -180,6 +180,7 @@ class CartographyComponent {
         this.styleArrowAircraft = {};
         this.styleArrowGimbal = {};
     }
+    //Lorsque le curseur bouge/clique sur la carte :
     onPointerMoveAndClick(evt) {
         var heureDate = "";
         var tempsVol = 0;
@@ -387,6 +388,7 @@ __webpack_require__.r(__webpack_exports__);
 class ReplaysComponent {
     constructor(http) {
         this.http = http;
+        //Création des variables globales
         this.interId = 1;
         this.videoNumber = [];
         this.styleChoixInter = "block";
@@ -417,6 +419,7 @@ class ReplaysComponent {
             this.toggleModal({ idInter: 0, name: "" });
         }
     }
+    //Affiche/Enleve le modal (modificatin du nom de l'intervention)
     toggleModal(inter) {
         this.newTitle = "";
         this.displayError = "none";
@@ -431,6 +434,7 @@ class ReplaysComponent {
             this.isModalOn = false;
         }
     }
+    //Soumet le nouveau nom dans la base de données
     editName(idInter) {
         this.displayError = "none";
         if (this.newTitle.length == 0) {
@@ -443,6 +447,7 @@ class ReplaysComponent {
             });
         }
     }
+    //Crée la liste des interventions après demande à la db
     generateInterList() {
         var x = [];
         this.http.get("http://192.168.13.110:8888/api/interventions")
@@ -484,6 +489,7 @@ class ReplaysComponent {
         img.onerror = bad;
         img.src = imageSrc;
     }
+    //Récupère en base de données le nombre de vidéos par intervention
     getVideoNumber(data) {
         for (let j = 0; j < data.length; j++) {
             this.http.get("http://192.168.13.110:8888/api/videoByInter?id=" + data[j]["idInter"])
@@ -514,6 +520,7 @@ class ReplaysComponent {
         this.displayLoading = "none";
         console.log(this.inters);
     }
+    //Vérifie si de nouvelles vidéos sont dispos (et ne sont pas encore en db)
     checkIfNewVideos(dbData) {
         this.http.get("http://192.168.13.110:8080/getreplays")
             .subscribe(result => {
@@ -548,6 +555,7 @@ class ReplaysComponent {
             this.checkIfUnassignedVideos();
         }, 500);
     }
+    //Vérifie si des vidéos en db ne sont pas assignées à une intervention
     checkIfUnassignedVideos() {
         this.http.get("http://192.168.13.110:8888/api/unassignedVideos")
             .subscribe(res => {
@@ -611,6 +619,7 @@ class ReplaysComponent {
             this.displayLoading = "none";
         });
     }
+    //Ajoute une vidéo en base de données
     addVideoToDb(data) {
         this.http.post('http://192.168.13.110:8888/api/newvideo', { fileName: data[1], videoName: data[1], recordTime: data[0] }).subscribe(data => {
             this.generateInterList();
@@ -618,6 +627,7 @@ class ReplaysComponent {
             this.displayLoading = "none";
         });
     }
+    //Assigne une interventions à une vidéo
     setInterToVideo(video, inter) {
         console.log(video, inter);
         this.http.post('http://192.168.13.110:8888/api/intertovideo', { fileName: video, idInter: inter }).subscribe(data => {
@@ -626,6 +636,7 @@ class ReplaysComponent {
             this.displayLoading = "none";
         });
     }
+    //Crée une nouvelle inter en db
     createInter(data) {
         for (let i = 0; i < data.length; i++) {
             this.http.post('http://192.168.13.110:8888/api/newinter', { startTime: data[i][0][1] })
@@ -642,6 +653,7 @@ class ReplaysComponent {
         }
         this.generateInterList();
     }
+    //Routing
     moveToInterReplay(inter) {
         if (inter.numberOfVideos == 0) {
             return;
@@ -650,9 +662,11 @@ class ReplaysComponent {
             window.location.href = '/replay?id=' + inter["idInter"];
         }
     }
+    //Routing
     moveToInterStats(inter) {
         window.location.href = '/stats?id=' + inter["idInter"];
     }
+    //Changement du format de date
     toDatetimeFormat(date) {
         var monthString = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         var month = date[8] + date[9] + date[10];
@@ -666,6 +680,7 @@ class ReplaysComponent {
         var res = date[12] + date[13] + date[14] + date[15] + "-" + monthStr + "-" + date[5] + date[6] + " " + date[17] + date[18] + ":" + date[20] + date[21] + ":" + date[23] + date[24];
         return res;
     }
+    //Récupère les droits d'accès de l'utilisateur connecté
     getDroits() {
         var mail = this.getCookie("email");
         var url = "http://192.168.13.110:8888/api/droits?mail=" + mail;
@@ -679,6 +694,7 @@ class ReplaysComponent {
             console.log(error);
         });
     }
+    //Récupère la valeur du cookie
     getCookie(name) {
         let ca = document.cookie.split(';');
         let caLen = ca.length;
@@ -785,6 +801,7 @@ class StatisticsComponent {
             this.toggleModal("");
         }
     }
+    // Affiche/Enleve le modal (qui reprend les warnings)
     toggleModal(idVol) {
         if (idVol.length != 0) {
             var url = "http://192.168.13.110:8888/api/getwarnings?id=" + idVol;
@@ -857,6 +874,7 @@ class StatisticsComponent {
             this.insertFlightToDatabase(finalArray, finalWarnings);
         }
     }
+    //Traites les données avant de les ajouter en base de données
     insertFlightToDatabase(data, datawarnings) {
         var idInter = parseInt((window.location.href).split("?")[1].substring(3));
         var startTime = data[1][0];
@@ -877,13 +895,14 @@ class StatisticsComponent {
                 maxHeight = data[i][4];
             }
         }
+        //Déclare les variables globales
         var startLatitude = data[1][2];
         var startLongitude = data[1][3];
         var batteryGraph = this.drawBattery(data, (this.widthBattery - 40), (this.heightBattery - 40));
         var heightGraph = this.drawAltitude(data, (this.widthAltitude - 40), (this.heightAltitude - 40));
-        console.log("insertFlightToDatabase done");
         this.addFlightToDatabase(idInter, startTime, flightTime, startLatitude, startLongitude, batteryGraph, heightGraph, maxHeight, data, datawarnings);
     }
+    //Ajoute le vol en base de données
     addFlightToDatabase(idInter, startTime, flightTime, startLatitude, startLongitude, batteryGraph, heightGraph, maxHeight, data, datawarnings) {
         this.http.post('http://192.168.13.110:8888/api/newflight', { idInter, startTime, flightTime, startLatitude, startLongitude, batteryGraph, heightGraph, maxHeight }).subscribe(res => {
             console.log("addFlightToDatabase done");
@@ -903,12 +922,12 @@ class StatisticsComponent {
                     this.http.post('http://192.168.13.110:8888/api/newaddress', { idInter, commune, street })
                         .subscribe(res => {
                     }, error => {
-                        // this.displayLoading = "none";
                     });
                 }
             });
         }
     }
+    //Ajoutes les données de vol en base de données
     addFlightDataToDatabase(data, datawarnings) {
         this.http.get("http://192.168.13.110:8888/api/lastflight")
             .subscribe(result => {
@@ -1257,10 +1276,12 @@ class StatisticsComponent {
         }
         return final;
     }
+    //Change l'altitude (ft -> m)
     changeHeightFormat(height) {
         var heightInMeters = Math.round(height * 0.3048);
         return heightInMeters;
     }
+    //Récupères les droits liées à l'utilisateur connecté
     getDroits() {
         var mail = this.getCookie("email");
         var url = "http://192.168.13.110:8888/api/droits?mail=" + mail;
@@ -1274,6 +1295,7 @@ class StatisticsComponent {
             console.log(error);
         });
     }
+    //Récupère la valeur du cookie
     getCookie(name) {
         let ca = document.cookie.split(';');
         let caLen = ca.length;
@@ -1515,6 +1537,7 @@ class HomeComponent {
         this.liveAccess = false;
         this.replaysAccess = false;
     }
+    //Routing
     moveToLive() {
         if (this.liveAccess) {
             window.location.href = "/live";
@@ -1523,6 +1546,7 @@ class HomeComponent {
             alert("Vous n'êtes pas autorisé à visiter cette page. Veuillez contacter un administrateur pour recevoir les droits.");
         }
     }
+    //Routing
     moveToInters() {
         if (this.replaysAccess) {
             window.location.href = "/inters";
@@ -1531,6 +1555,7 @@ class HomeComponent {
             alert("Vous n'êtes pas autorisé à visiter cette page. Veuillez contacter un administrateur pour recevoir les droits.");
         }
     }
+    //Récupères les droits de l'utilisateur connecté
     getDroits() {
         var mail = this.getCookie("email");
         var url = "http://192.168.13.110:8888/api/droits?mail=" + mail;
@@ -1553,6 +1578,7 @@ class HomeComponent {
             console.log(error);
         });
     }
+    //Récupère la valeur du cookie
     getCookie(name) {
         let ca = document.cookie.split(';');
         let caLen = ca.length;
@@ -2246,6 +2272,7 @@ class AppComponent {
         this.tryingToConnect = false;
         this.title = 'Drone - ZSBW';
     }
+    //Connection avec Google Auth
     // connection() {
     //   var token = this.getCookie('token');
     //   if(!token) {
@@ -2300,6 +2327,7 @@ class AppComponent {
     //     });
     //   }
     // }
+    //Récupère la valeur du cookie
     getCookie(name) {
         let ca = document.cookie.split(';');
         let caLen = ca.length;
@@ -2313,9 +2341,11 @@ class AppComponent {
         }
         return '';
     }
+    //Supprime un cookie
     deleteCookie(name) {
         this.setCookie(name, '', -1);
     }
+    //Change la valeur d'un cookie
     setCookie(name, value, expireDays, path = '') {
         let d = new Date();
         d.setTime(d.getTime() + expireDays * 24 * 60 * 60 * 1000);
@@ -2327,8 +2357,10 @@ class AppComponent {
     }
     ngOnInit() {
         this.isConnected = false;
+        ////////////////////////////////////////////////////////
         // this.connection();
         this.setCookie('email', 'luyckx.matthieu@gmail.com', 1);
+        ////////////////////////////////////////////////////////
         this.isConnected = true;
     }
 }
@@ -2352,7 +2384,7 @@ __webpack_require__.r(__webpack_exports__);
  * @suppress {suspiciousCode,uselessCode,missingProperties,missingOverride,checkTypes,extraRequire}
  * tslint:disable
  */
-var styles = ["body {\r\n    overflow-x: hidden;\r\n}\r\n\r\n#contenu {\r\n    background-image: url(\"/admin/assets/bgImg.jpg\");\r\n    background-size: cover;\r\n    width: 60%;\r\n    margin-left: 20%;\r\n}\r\n\r\n.video-js {\r\n    width: 60vw;\r\n    height: 35vw;\r\n    margin: 0 auto;\r\n}\r\n\r\n.vjs-poster {\r\n    background-image: url('poster.jpg') !important;\r\n}\r\n\r\n.vjs-styling .vjs-volume-control .vjs-control .vjs-volume-horizontal {\r\n    background-color: red !important;\r\n}\r\n\r\n#changeButton {\r\n    height: 50px;\r\n    width: 75%;\r\n    margin-left: 12.5%;\r\n}\r\n\r\n#newFluxDiv {\r\n    width: 98vw;\r\n    background-color: rgb(214,214,214);\r\n    margin-bottom: 10px;\r\n    color: white;\r\n    font-size: 3vh;\r\n    text-align: center;\r\n    display: block;\r\n    border: 1vw solid rgb(214,214,214);\r\n    color: black;\r\n}\r\n\r\n#buttonLive {\r\n    text-align: center;\r\n    position: relative;\r\n    width: 20vw;\r\n    height: auto;\r\n    min-height: 8vh;\r\n    margin: 2vh auto 0 auto;\r\n    background-color: rgb(190, 190, 190);\r\n   \r\n}\r\n\r\n#buttonLive:hover {\r\n    cursor: pointer;\r\n    background-color:  rgb(200,200,200);\r\n}\r\n\r\n#buttonLive > p {\r\n    padding: 2vh 2vw;\r\n}\r\n\r\n#backToLive {\r\n    height: 7%;\r\n    width:75%;\r\n    margin-left: 12.5%;\r\n    font-size: 1em;\r\n    display: block;\r\n}\r\n\r\n.changeQualityButton {\r\n    text-align: center;\r\n    position: relative;\r\n    width: 20vw;\r\n    height: auto;\r\n    min-height: 8vh;\r\n    \r\n    margin: 5vh auto 0 auto;\r\n    background-color: rgb(214, 214, 214);\r\n}\r\n\r\n.changeQualityButton:hover {\r\n    cursor: pointer;\r\n    background-color: rgb(190, 190, 190);\r\n}\r\n\r\n.changeQualityButton > p {\r\n    padding: 2vh 2vw;\r\n}\r\n\r\n@media only screen and (max-width: 550px) {\r\n    .vjs-big-play-button {\r\n        margin-top: 0;\r\n    }\r\n}\r\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImxpdmVzdHJlYW0uY29tcG9uZW50LmNzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtJQUNJLGtCQUFrQjtBQUN0Qjs7QUFFQTtJQUNJLGdEQUFnRDtJQUNoRCxzQkFBc0I7SUFDdEIsVUFBVTtJQUNWLGdCQUFnQjtBQUNwQjs7QUFDQTtJQUNJLFdBQVc7SUFDWCxZQUFZO0lBQ1osY0FBYztBQUNsQjs7QUFFQTtJQUNJLDhDQUEyRDtBQUMvRDs7QUFDQTtJQUNJLGdDQUFnQztBQUNwQzs7QUFFQTtJQUNJLFlBQVk7SUFDWixVQUFVO0lBQ1Ysa0JBQWtCO0FBQ3RCOztBQUVBO0lBQ0ksV0FBVztJQUNYLGtDQUFrQztJQUNsQyxtQkFBbUI7SUFDbkIsWUFBWTtJQUNaLGNBQWM7SUFDZCxrQkFBa0I7SUFDbEIsY0FBYztJQUNkLGtDQUFrQztJQUNsQyxZQUFZO0FBQ2hCOztBQUNBO0lBQ0ksa0JBQWtCO0lBQ2xCLGtCQUFrQjtJQUNsQixXQUFXO0lBQ1gsWUFBWTtJQUNaLGVBQWU7SUFDZix1QkFBdUI7SUFDdkIsb0NBQW9DOztBQUV4Qzs7QUFFQTtJQUNJLGVBQWU7SUFDZixtQ0FBbUM7QUFDdkM7O0FBRUE7SUFDSSxnQkFBZ0I7QUFDcEI7O0FBRUE7SUFDSSxVQUFVO0lBQ1YsU0FBUztJQUNULGtCQUFrQjtJQUNsQixjQUFjO0lBQ2QsY0FBYztBQUNsQjs7QUFFQTtJQUNJLGtCQUFrQjtJQUNsQixrQkFBa0I7SUFDbEIsV0FBVztJQUNYLFlBQVk7SUFDWixlQUFlO0lBQ2YscUJBQXFCO0lBQ3JCLHVCQUF1QjtJQUN2QixvQ0FBb0M7QUFDeEM7O0FBRUE7SUFDSSxlQUFlO0lBQ2Ysb0NBQW9DO0FBQ3hDOztBQUVBO0lBQ0ksZ0JBQWdCO0FBQ3BCOztBQUVBO0lBQ0k7UUFDSSxhQUFhO0lBQ2pCO0FBQ0oiLCJmaWxlIjoibGl2ZXN0cmVhbS5jb21wb25lbnQuY3NzIiwic291cmNlc0NvbnRlbnQiOlsiYm9keSB7XHJcbiAgICBvdmVyZmxvdy14OiBoaWRkZW47XHJcbn1cclxuXHJcbiNjb250ZW51IHtcclxuICAgIGJhY2tncm91bmQtaW1hZ2U6IHVybChcIi9hZG1pbi9hc3NldHMvYmdJbWcuanBnXCIpO1xyXG4gICAgYmFja2dyb3VuZC1zaXplOiBjb3ZlcjtcclxuICAgIHdpZHRoOiA2MCU7XHJcbiAgICBtYXJnaW4tbGVmdDogMjAlO1xyXG59XHJcbi52aWRlby1qcyB7XHJcbiAgICB3aWR0aDogNjB2dztcclxuICAgIGhlaWdodDogMzV2dztcclxuICAgIG1hcmdpbjogMCBhdXRvO1xyXG59XHJcblxyXG4udmpzLXBvc3RlciB7XHJcbiAgICBiYWNrZ3JvdW5kLWltYWdlOiB1cmwoXCIuLi8uLi9hc3NldHMvcG9zdGVyLmpwZ1wiKSAhaW1wb3J0YW50O1xyXG59XHJcbi52anMtc3R5bGluZyAudmpzLXZvbHVtZS1jb250cm9sIC52anMtY29udHJvbCAudmpzLXZvbHVtZS1ob3Jpem9udGFsIHtcclxuICAgIGJhY2tncm91bmQtY29sb3I6IHJlZCAhaW1wb3J0YW50O1xyXG59XHJcblxyXG4jY2hhbmdlQnV0dG9uIHtcclxuICAgIGhlaWdodDogNTBweDtcclxuICAgIHdpZHRoOiA3NSU7XHJcbiAgICBtYXJnaW4tbGVmdDogMTIuNSU7XHJcbn1cclxuXHJcbiNuZXdGbHV4RGl2IHtcclxuICAgIHdpZHRoOiA5OHZ3O1xyXG4gICAgYmFja2dyb3VuZC1jb2xvcjogcmdiKDIxNCwyMTQsMjE0KTtcclxuICAgIG1hcmdpbi1ib3R0b206IDEwcHg7XHJcbiAgICBjb2xvcjogd2hpdGU7XHJcbiAgICBmb250LXNpemU6IDN2aDtcclxuICAgIHRleHQtYWxpZ246IGNlbnRlcjtcclxuICAgIGRpc3BsYXk6IGJsb2NrO1xyXG4gICAgYm9yZGVyOiAxdncgc29saWQgcmdiKDIxNCwyMTQsMjE0KTtcclxuICAgIGNvbG9yOiBibGFjaztcclxufVxyXG4jYnV0dG9uTGl2ZSB7XHJcbiAgICB0ZXh0LWFsaWduOiBjZW50ZXI7XHJcbiAgICBwb3NpdGlvbjogcmVsYXRpdmU7XHJcbiAgICB3aWR0aDogMjB2dztcclxuICAgIGhlaWdodDogYXV0bztcclxuICAgIG1pbi1oZWlnaHQ6IDh2aDtcclxuICAgIG1hcmdpbjogMnZoIGF1dG8gMCBhdXRvO1xyXG4gICAgYmFja2dyb3VuZC1jb2xvcjogcmdiKDE5MCwgMTkwLCAxOTApO1xyXG4gICBcclxufVxyXG5cclxuI2J1dHRvbkxpdmU6aG92ZXIge1xyXG4gICAgY3Vyc29yOiBwb2ludGVyO1xyXG4gICAgYmFja2dyb3VuZC1jb2xvcjogIHJnYigyMDAsMjAwLDIwMCk7XHJcbn1cclxuXHJcbiNidXR0b25MaXZlID4gcCB7XHJcbiAgICBwYWRkaW5nOiAydmggMnZ3O1xyXG59XHJcblxyXG4jYmFja1RvTGl2ZSB7XHJcbiAgICBoZWlnaHQ6IDclO1xyXG4gICAgd2lkdGg6NzUlO1xyXG4gICAgbWFyZ2luLWxlZnQ6IDEyLjUlO1xyXG4gICAgZm9udC1zaXplOiAxZW07XHJcbiAgICBkaXNwbGF5OiBibG9jaztcclxufVxyXG5cclxuLmNoYW5nZVF1YWxpdHlCdXR0b24ge1xyXG4gICAgdGV4dC1hbGlnbjogY2VudGVyO1xyXG4gICAgcG9zaXRpb246IHJlbGF0aXZlO1xyXG4gICAgd2lkdGg6IDIwdnc7XHJcbiAgICBoZWlnaHQ6IGF1dG87XHJcbiAgICBtaW4taGVpZ2h0OiA4dmg7XHJcbiAgICAvKiBtYXJnaW4tdG9wOiA1dmg7ICovXHJcbiAgICBtYXJnaW46IDV2aCBhdXRvIDAgYXV0bztcclxuICAgIGJhY2tncm91bmQtY29sb3I6IHJnYigyMTQsIDIxNCwgMjE0KTtcclxufVxyXG5cclxuLmNoYW5nZVF1YWxpdHlCdXR0b246aG92ZXIge1xyXG4gICAgY3Vyc29yOiBwb2ludGVyO1xyXG4gICAgYmFja2dyb3VuZC1jb2xvcjogcmdiKDE5MCwgMTkwLCAxOTApO1xyXG59XHJcblxyXG4uY2hhbmdlUXVhbGl0eUJ1dHRvbiA+IHAge1xyXG4gICAgcGFkZGluZzogMnZoIDJ2dztcclxufVxyXG5cclxuQG1lZGlhIG9ubHkgc2NyZWVuIGFuZCAobWF4LXdpZHRoOiA1NTBweCkge1xyXG4gICAgLnZqcy1iaWctcGxheS1idXR0b24ge1xyXG4gICAgICAgIG1hcmdpbi10b3A6IDA7XHJcbiAgICB9XHJcbn0iXX0= */"];
+var styles = ["body {\r\n    overflow-x: hidden;\r\n}\r\n\r\n#contenu {\r\n    background-size: cover;\r\n    width: 60%;\r\n    margin-left: 20%;\r\n}\r\n\r\n.video-js {\r\n    width: 60vw;\r\n    height: 35vw;\r\n    margin: 0 auto;\r\n}\r\n\r\n.vjs-poster {\r\n    background-image: url('poster.jpg') !important;\r\n}\r\n\r\n.vjs-styling .vjs-volume-control .vjs-control .vjs-volume-horizontal {\r\n    background-color: red !important;\r\n}\r\n\r\n#changeButton {\r\n    height: 50px;\r\n    width: 75%;\r\n    margin-left: 12.5%;\r\n}\r\n\r\n#newFluxDiv {\r\n    width: 98vw;\r\n    background-color: rgb(214,214,214);\r\n    margin-bottom: 10px;\r\n    color: white;\r\n    font-size: 3vh;\r\n    text-align: center;\r\n    display: block;\r\n    border: 1vw solid rgb(214,214,214);\r\n    color: black;\r\n}\r\n\r\n#buttonLive {\r\n    text-align: center;\r\n    position: relative;\r\n    width: 20vw;\r\n    height: auto;\r\n    min-height: 8vh;\r\n    margin: 2vh auto 0 auto;\r\n    background-color: rgb(190, 190, 190);\r\n   \r\n}\r\n\r\n#buttonLive:hover {\r\n    cursor: pointer;\r\n    background-color:  rgb(200,200,200);\r\n}\r\n\r\n#buttonLive > p {\r\n    padding: 2vh 2vw;\r\n}\r\n\r\n#backToLive {\r\n    height: 7%;\r\n    width:75%;\r\n    margin-left: 12.5%;\r\n    font-size: 1em;\r\n    display: block;\r\n}\r\n\r\n.changeQualityButton {\r\n    text-align: center;\r\n    position: relative;\r\n    width: 20vw;\r\n    height: auto;\r\n    min-height: 8vh;\r\n    \r\n    margin: 5vh auto 0 auto;\r\n    background-color: rgb(214, 214, 214);\r\n}\r\n\r\n.changeQualityButton:hover {\r\n    cursor: pointer;\r\n    background-color: rgb(190, 190, 190);\r\n}\r\n\r\n.changeQualityButton > p {\r\n    padding: 2vh 2vw;\r\n}\r\n\r\n@media only screen and (max-width: 550px) {\r\n    .vjs-big-play-button {\r\n        margin-top: 0;\r\n    }\r\n}\r\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImxpdmVzdHJlYW0uY29tcG9uZW50LmNzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtJQUNJLGtCQUFrQjtBQUN0Qjs7QUFFQTtJQUNJLHNCQUFzQjtJQUN0QixVQUFVO0lBQ1YsZ0JBQWdCO0FBQ3BCOztBQUNBO0lBQ0ksV0FBVztJQUNYLFlBQVk7SUFDWixjQUFjO0FBQ2xCOztBQUVBO0lBQ0ksOENBQTJEO0FBQy9EOztBQUNBO0lBQ0ksZ0NBQWdDO0FBQ3BDOztBQUVBO0lBQ0ksWUFBWTtJQUNaLFVBQVU7SUFDVixrQkFBa0I7QUFDdEI7O0FBRUE7SUFDSSxXQUFXO0lBQ1gsa0NBQWtDO0lBQ2xDLG1CQUFtQjtJQUNuQixZQUFZO0lBQ1osY0FBYztJQUNkLGtCQUFrQjtJQUNsQixjQUFjO0lBQ2Qsa0NBQWtDO0lBQ2xDLFlBQVk7QUFDaEI7O0FBQ0E7SUFDSSxrQkFBa0I7SUFDbEIsa0JBQWtCO0lBQ2xCLFdBQVc7SUFDWCxZQUFZO0lBQ1osZUFBZTtJQUNmLHVCQUF1QjtJQUN2QixvQ0FBb0M7O0FBRXhDOztBQUVBO0lBQ0ksZUFBZTtJQUNmLG1DQUFtQztBQUN2Qzs7QUFFQTtJQUNJLGdCQUFnQjtBQUNwQjs7QUFFQTtJQUNJLFVBQVU7SUFDVixTQUFTO0lBQ1Qsa0JBQWtCO0lBQ2xCLGNBQWM7SUFDZCxjQUFjO0FBQ2xCOztBQUVBO0lBQ0ksa0JBQWtCO0lBQ2xCLGtCQUFrQjtJQUNsQixXQUFXO0lBQ1gsWUFBWTtJQUNaLGVBQWU7SUFDZixxQkFBcUI7SUFDckIsdUJBQXVCO0lBQ3ZCLG9DQUFvQztBQUN4Qzs7QUFFQTtJQUNJLGVBQWU7SUFDZixvQ0FBb0M7QUFDeEM7O0FBRUE7SUFDSSxnQkFBZ0I7QUFDcEI7O0FBRUE7SUFDSTtRQUNJLGFBQWE7SUFDakI7QUFDSiIsImZpbGUiOiJsaXZlc3RyZWFtLmNvbXBvbmVudC5jc3MiLCJzb3VyY2VzQ29udGVudCI6WyJib2R5IHtcclxuICAgIG92ZXJmbG93LXg6IGhpZGRlbjtcclxufVxyXG5cclxuI2NvbnRlbnUge1xyXG4gICAgYmFja2dyb3VuZC1zaXplOiBjb3ZlcjtcclxuICAgIHdpZHRoOiA2MCU7XHJcbiAgICBtYXJnaW4tbGVmdDogMjAlO1xyXG59XHJcbi52aWRlby1qcyB7XHJcbiAgICB3aWR0aDogNjB2dztcclxuICAgIGhlaWdodDogMzV2dztcclxuICAgIG1hcmdpbjogMCBhdXRvO1xyXG59XHJcblxyXG4udmpzLXBvc3RlciB7XHJcbiAgICBiYWNrZ3JvdW5kLWltYWdlOiB1cmwoXCIuLi8uLi9hc3NldHMvcG9zdGVyLmpwZ1wiKSAhaW1wb3J0YW50O1xyXG59XHJcbi52anMtc3R5bGluZyAudmpzLXZvbHVtZS1jb250cm9sIC52anMtY29udHJvbCAudmpzLXZvbHVtZS1ob3Jpem9udGFsIHtcclxuICAgIGJhY2tncm91bmQtY29sb3I6IHJlZCAhaW1wb3J0YW50O1xyXG59XHJcblxyXG4jY2hhbmdlQnV0dG9uIHtcclxuICAgIGhlaWdodDogNTBweDtcclxuICAgIHdpZHRoOiA3NSU7XHJcbiAgICBtYXJnaW4tbGVmdDogMTIuNSU7XHJcbn1cclxuXHJcbiNuZXdGbHV4RGl2IHtcclxuICAgIHdpZHRoOiA5OHZ3O1xyXG4gICAgYmFja2dyb3VuZC1jb2xvcjogcmdiKDIxNCwyMTQsMjE0KTtcclxuICAgIG1hcmdpbi1ib3R0b206IDEwcHg7XHJcbiAgICBjb2xvcjogd2hpdGU7XHJcbiAgICBmb250LXNpemU6IDN2aDtcclxuICAgIHRleHQtYWxpZ246IGNlbnRlcjtcclxuICAgIGRpc3BsYXk6IGJsb2NrO1xyXG4gICAgYm9yZGVyOiAxdncgc29saWQgcmdiKDIxNCwyMTQsMjE0KTtcclxuICAgIGNvbG9yOiBibGFjaztcclxufVxyXG4jYnV0dG9uTGl2ZSB7XHJcbiAgICB0ZXh0LWFsaWduOiBjZW50ZXI7XHJcbiAgICBwb3NpdGlvbjogcmVsYXRpdmU7XHJcbiAgICB3aWR0aDogMjB2dztcclxuICAgIGhlaWdodDogYXV0bztcclxuICAgIG1pbi1oZWlnaHQ6IDh2aDtcclxuICAgIG1hcmdpbjogMnZoIGF1dG8gMCBhdXRvO1xyXG4gICAgYmFja2dyb3VuZC1jb2xvcjogcmdiKDE5MCwgMTkwLCAxOTApO1xyXG4gICBcclxufVxyXG5cclxuI2J1dHRvbkxpdmU6aG92ZXIge1xyXG4gICAgY3Vyc29yOiBwb2ludGVyO1xyXG4gICAgYmFja2dyb3VuZC1jb2xvcjogIHJnYigyMDAsMjAwLDIwMCk7XHJcbn1cclxuXHJcbiNidXR0b25MaXZlID4gcCB7XHJcbiAgICBwYWRkaW5nOiAydmggMnZ3O1xyXG59XHJcblxyXG4jYmFja1RvTGl2ZSB7XHJcbiAgICBoZWlnaHQ6IDclO1xyXG4gICAgd2lkdGg6NzUlO1xyXG4gICAgbWFyZ2luLWxlZnQ6IDEyLjUlO1xyXG4gICAgZm9udC1zaXplOiAxZW07XHJcbiAgICBkaXNwbGF5OiBibG9jaztcclxufVxyXG5cclxuLmNoYW5nZVF1YWxpdHlCdXR0b24ge1xyXG4gICAgdGV4dC1hbGlnbjogY2VudGVyO1xyXG4gICAgcG9zaXRpb246IHJlbGF0aXZlO1xyXG4gICAgd2lkdGg6IDIwdnc7XHJcbiAgICBoZWlnaHQ6IGF1dG87XHJcbiAgICBtaW4taGVpZ2h0OiA4dmg7XHJcbiAgICAvKiBtYXJnaW4tdG9wOiA1dmg7ICovXHJcbiAgICBtYXJnaW46IDV2aCBhdXRvIDAgYXV0bztcclxuICAgIGJhY2tncm91bmQtY29sb3I6IHJnYigyMTQsIDIxNCwgMjE0KTtcclxufVxyXG5cclxuLmNoYW5nZVF1YWxpdHlCdXR0b246aG92ZXIge1xyXG4gICAgY3Vyc29yOiBwb2ludGVyO1xyXG4gICAgYmFja2dyb3VuZC1jb2xvcjogcmdiKDE5MCwgMTkwLCAxOTApO1xyXG59XHJcblxyXG4uY2hhbmdlUXVhbGl0eUJ1dHRvbiA+IHAge1xyXG4gICAgcGFkZGluZzogMnZoIDJ2dztcclxufVxyXG5cclxuQG1lZGlhIG9ubHkgc2NyZWVuIGFuZCAobWF4LXdpZHRoOiA1NTBweCkge1xyXG4gICAgLnZqcy1iaWctcGxheS1idXR0b24ge1xyXG4gICAgICAgIG1hcmdpbi10b3A6IDA7XHJcbiAgICB9XHJcbn0iXX0= */"];
 
 
 
@@ -2376,6 +2408,7 @@ class SecurelinkComponent {
         this.displayModal = "none";
         this.isModalOn = false;
         this.copyText = "Copier le lien";
+        //Création des variables globales
         this.validite = "";
         this.options = [{ id: 0, label: 0, selected: false }];
         this.isShown = false;
@@ -2402,6 +2435,7 @@ class SecurelinkComponent {
     ngOnInit() {
         this.createOptions();
     }
+    //Affiche/Enleve le modal (génération de lien sécurisé)
     toggleModal() {
         if (!this.isModalOn) {
             this.displayModal = "block";
@@ -2413,6 +2447,7 @@ class SecurelinkComponent {
             this.isShown = false;
         }
     }
+    //Création de l'url sécurisé
     generateSecureLink() {
         var duree = parseInt(this.selectedOption);
         var d = new Date();
@@ -2432,6 +2467,7 @@ class SecurelinkComponent {
         this.securedLink = link;
         this.securedUrl = url;
     }
+    //Génération des valeurs pour le choix du temps (1 à 24h)
     createOptions() {
         this.options = [];
         for (let i = 1; i <= 24; i++) {
@@ -2443,6 +2479,7 @@ class SecurelinkComponent {
             }
         }
     }
+    //Copiage du lien dans le presse-papier
     copyLink() {
         const selBox = document.createElement("input");
         selBox.value = this.securedLink;
@@ -2477,6 +2514,7 @@ class ReplayinterComponent {
     constructor(http, elementRef) {
         this.http = http;
         this.elementRef = elementRef;
+        //Déclaration de variables globales
         this.styleChoixInter = "block";
         this.interId = 0;
         this.videoName = "Unknown";
@@ -2507,6 +2545,7 @@ class ReplayinterComponent {
             this.toggleModal();
         }
     }
+    //Vérifie si de nouvelles vidéos sont disponibles
     checkIfNewVideos(dbData) {
         this.http.get("http://192.168.13.110:8080/getreplays")
             // this.http.get("http://localhost:8888/api/videoFileNameList")
@@ -2530,6 +2569,7 @@ class ReplayinterComponent {
             }
         });
     }
+    //Changement du format de date
     toDatetimeFormat(date, isDayOfWeek) {
         if (!isDayOfWeek) {
             date = "xxxxx" + date;
@@ -2551,6 +2591,7 @@ class ReplayinterComponent {
             //  console.log(data);
         });
     }
+    //Change le source du lecteur
     changeSrc(newSrc, videoName) {
         var source = "http://192.168.13.110:8080/getreplays/" + newSrc + ".mp4";
         // console.log(newSrc)
@@ -2565,8 +2606,8 @@ class ReplayinterComponent {
         this.fileName = newSrc;
         this.fileNameDownload = newSrc + ".mp4";
         this.videoName = videoName;
-        // console.log('okok')
     }
+    //Affiche/Enleve le modal (servant à renommer la video sélectionnée)
     toggleModal() {
         if (!this.isModalOn) {
             this.displayModal = "block";
@@ -2577,6 +2618,7 @@ class ReplayinterComponent {
             this.isModalOn = false;
         }
     }
+    //Soumet le nouveau nom de la vidéo en base de données
     editName() {
         this.displayError = "none";
         if (this.newTitle.length == 0) {
@@ -2588,6 +2630,7 @@ class ReplayinterComponent {
             });
         }
     }
+    //Récupère les droits de l'utilisateur connecté
     getDroits() {
         var mail = this.getCookie("email");
         var url = "http://192.168.13.110:8888/api/droits?mail=" + mail;
@@ -2601,6 +2644,7 @@ class ReplayinterComponent {
             console.log(error);
         });
     }
+    //Récupère le cookie
     getCookie(name) {
         let ca = document.cookie.split(';');
         let caLen = ca.length;
@@ -2693,12 +2737,14 @@ class LivestreamComponent {
         this.bgColor = "lightgreen";
         this.isReading = false;
     }
+    //Actualise la source de la vidéo (relance le live si celui-ci a été créé depuis)
     setToLive() {
         if (this.target != undefined && this.player != undefined) {
             this.player.pause();
             this.player.src("http://192.168.13.110:8080/getdirectlive/index.m3u8");
         }
     }
+    //Modifie la qualité de l'image (HQ/LQ)
     changeQuality() {
         if (this.imageQuality == "Haute qualité") {
             this.imageQuality = "Basse qualité";
@@ -2717,6 +2763,7 @@ class LivestreamComponent {
             }
         }
     }
+    //Vérifie si un flux en direct est en cours
     updateFlux() {
         this.http.get("http://192.168.13.110:8080/getdirectlive")
             .subscribe(result => {
@@ -2741,6 +2788,7 @@ class LivestreamComponent {
             this.updateFlux();
         }, 10000);
     }
+    //Récupère les droits de l'utilisateur actuellement connecté
     getDroits() {
         var mail = this.getCookie("email");
         var url = "http://192.168.13.110:8888/api/droits?mail=" + mail;
@@ -2763,6 +2811,7 @@ class LivestreamComponent {
             console.log(error);
         });
     }
+    //Récupère les cookies
     getCookie(name) {
         let ca = document.cookie.split(';');
         let caLen = ca.length;
@@ -2882,16 +2931,14 @@ class FooterComponent {
             this.toggleModal();
         }
     }
+    //Se déconnecte (Google Auth)
     logout() {
         this.deleteCookie("token");
         this.deleteCookie("email");
         window.location.href = "/";
     }
+    //Modifie les droits des utilisateurs (nécessite d'être Super Admin)
     updateDroits() {
-        console.log(this.email);
-        console.log(this.newsuperadmin);
-        console.log(this.newadmin);
-        console.log(this.newdispatch);
         this.sendText = "Envoi...";
         if (this.email == "" || !this.email.includes("@")) {
             this.sendText = "Soumettre";
@@ -2946,6 +2993,7 @@ class FooterComponent {
             });
         }
     }
+    //Récupère les droits d'un certain utilisateur et les affiche
     changeUser(name, isSuperAdmin, isAdmin, isDispatch, target) {
         this.email = name;
         if (isSuperAdmin == "X") {
@@ -2968,6 +3016,7 @@ class FooterComponent {
         }
         target.scrollTo({ top: 50, behavior: 'smooth' });
     }
+    //Affiche/Enleve le popup d'administratio
     toggleModal() {
         if (!this.isModalOn) {
             this.loadDroitsPersons();
@@ -2979,9 +3028,11 @@ class FooterComponent {
             this.isModalOn = false;
         }
     }
+    //Supprime le cookie
     deleteCookie(name) {
         this.setCookie(name, '', -1);
     }
+    //Ajoute un cookie
     setCookie(name, value, expireDays, path = '') {
         let d = new Date();
         d.setTime(d.getTime() + expireDays * 24 * 60 * 60 * 1000);
@@ -2989,6 +3040,7 @@ class FooterComponent {
         let cpath = path ? `; path=${path}` : '';
         document.cookie = `${name}=${value}; ${expires}${cpath}`;
     }
+    //Récupère les droits de l'utilisateur connecté
     getDroits() {
         var mail = this.getCookie("email");
         var url = "http://192.168.13.110:8888/api/droits?mail=" + mail;
@@ -3011,6 +3063,7 @@ class FooterComponent {
             console.log(error);
         });
     }
+    //Récupère l'ensemble des droits 
     loadDroitsPersons() {
         var url = "http://192.168.13.110:8888/api/getallusers";
         this.http.get(url)
@@ -3042,6 +3095,7 @@ class FooterComponent {
             console.log(error);
         });
     }
+    //Récupère la valeur du cookie
     getCookie(name) {
         let ca = document.cookie.split(';');
         let caLen = ca.length;

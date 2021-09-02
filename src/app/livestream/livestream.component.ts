@@ -14,6 +14,7 @@ var videoLink: string = "http://192.168.13.110:8080/live/index.m3u8";
 })
 export class LivestreamComponent implements OnInit {
 
+  //Déclaration de variables globales
   @ViewChild('target', {static: true}) target: ElementRef | undefined;
   // see options: https://github.com/videojs/video.js/blob/maintutorial-options.html
   player: videojs.Player | undefined;
@@ -29,6 +30,7 @@ export class LivestreamComponent implements OnInit {
 
   constructor(private http: HttpClient) {}
 
+  //Actualise la source de la vidéo (relance le live si celui-ci a été créé depuis)
   setToLive() {
     if(this.target != undefined && this.player != undefined) {
       this.player.pause();
@@ -36,6 +38,7 @@ export class LivestreamComponent implements OnInit {
     }
   }
 
+  //Modifie la qualité de l'image (HQ/LQ)
   changeQuality() {
     if(this.imageQuality == "Haute qualité") {
       this.imageQuality = "Basse qualité";
@@ -54,6 +57,7 @@ export class LivestreamComponent implements OnInit {
     }
   }
 
+  //Vérifie si un flux en direct est en cours
   updateFlux() {
     this.http.get("http://192.168.13.110:8080/getdirectlive")
       .subscribe(result => {  
@@ -80,6 +84,7 @@ export class LivestreamComponent implements OnInit {
     }, 10000)
   }
 
+  //Récupère les droits de l'utilisateur actuellement connecté
   getDroits() {
     var mail = this.getCookie("email");
     var url = "http://192.168.13.110:8888/api/droits?mail=" + mail; 
@@ -102,6 +107,7 @@ export class LivestreamComponent implements OnInit {
       });
   }
 
+  //Récupère les cookies
   getCookie(name: string) {
     let ca: Array<string> = document.cookie.split(';');
     let caLen: number = ca.length;

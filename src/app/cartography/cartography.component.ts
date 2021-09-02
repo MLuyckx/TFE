@@ -31,6 +31,8 @@ export class CartographyComponent implements OnInit {
   constructor(private http: HttpClient) {
       
    }
+
+  //Définition de variables globales
   
   map: Map | undefined;
   coordinate: number[] = [0, 0];
@@ -53,6 +55,7 @@ export class CartographyComponent implements OnInit {
   styleArrowAircraft:object = {};
   styleArrowGimbal:object = {};
 
+  //Lorsque le curseur bouge/clique sur la carte :
   onPointerMoveAndClick(evt: any) {
     var heureDate: string = "";
     var tempsVol: number = 0;

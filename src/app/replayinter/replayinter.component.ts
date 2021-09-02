@@ -14,6 +14,8 @@ export class ReplayinterComponent implements OnInit {
   player: videojs.Player | undefined;
 
   constructor(private http: HttpClient, private elementRef: ElementRef,) { }
+
+  //Déclaration de variables globales
   styleChoixInter = "block";
   
   interId: number = 0;
@@ -48,6 +50,7 @@ export class ReplayinterComponent implements OnInit {
     }
   }
 
+  //Vérifie si de nouvelles vidéos sont disponibles
   checkIfNewVideos(dbData:any) {
     this.http.get("http://192.168.13.110:8080/getreplays")
     // this.http.get("http://localhost:8888/api/videoFileNameList")
@@ -72,6 +75,7 @@ export class ReplayinterComponent implements OnInit {
     })
   }
 
+  //Changement du format de date
   toDatetimeFormat(date:string, isDayOfWeek: boolean) {
     if(!isDayOfWeek) {
       date = "xxxxx" + date;
@@ -94,6 +98,7 @@ export class ReplayinterComponent implements OnInit {
     })
   }
 
+  //Change le source du lecteur
   changeSrc(newSrc:string, videoName: string) {
     var source = "http://192.168.13.110:8080/getreplays/" + newSrc + ".mp4"
     // console.log(newSrc)
@@ -108,9 +113,9 @@ export class ReplayinterComponent implements OnInit {
     this.fileName = newSrc;
     this.fileNameDownload = newSrc + ".mp4"
     this.videoName = videoName;
-    // console.log('okok')
   }
 
+  //Affiche/Enleve le modal (servant à renommer la video sélectionnée)
   toggleModal() {
     if(!this.isModalOn) {
       this.displayModal = "block";
@@ -122,6 +127,7 @@ export class ReplayinterComponent implements OnInit {
     }
   }
 
+  //Soumet le nouveau nom de la vidéo en base de données
   editName() {
     this.displayError = "none";
     if(this.newTitle.length == 0) {
@@ -134,6 +140,7 @@ export class ReplayinterComponent implements OnInit {
     }
   }
 
+  //Récupère les droits de l'utilisateur connecté
   getDroits() {
     var mail = this.getCookie("email");
     var url = "http://192.168.13.110:8888/api/droits?mail=" + mail; 
@@ -149,6 +156,7 @@ export class ReplayinterComponent implements OnInit {
       });
   }
 
+  //Récupère le cookie
   getCookie(name: string) {
     let ca: Array<string> = document.cookie.split(';');
     let caLen: number = ca.length;
